@@ -5,14 +5,17 @@ import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-const timeSlots = Array.from({ length: 21 }, (_, i) => {
-  const hour = Math.floor(i / 2) + 8;
+// Generate all hours from 00:00 to 23:59
+const timeSlots = Array.from({ length: 48 }, (_, i) => {
+  const hour = Math.floor(i / 2);
   const minutes = i % 2 === 0 ? "00" : "30";
-  return `${hour}:${minutes}`;
+  return `${hour.toString().padStart(2, '0')}:${minutes}`;
 });
 
 const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+const weekendDays = ['Samedi', 'Dimanche'];
 
 interface Event {
   id: string;
@@ -105,6 +108,9 @@ export const WeeklyCalendar = () => {
   const selectedDayEvents = selectedDay
     ? sampleEvents.filter(event => event.day === selectedDay.index)
     : [];
+
+  // Find the index of 8:00 to scroll to by default
+  const defaultScrollIndex = timeSlots.findIndex(time => time === "08:00");
   
   return (
     <div className="p-4 pt-16 md:pt-4">
@@ -118,54 +124,72 @@ export const WeeklyCalendar = () => {
         </div>
       </div>
       
-      <div className="overflow-x-auto">
-        <div className="calendar-grid rounded-lg overflow-hidden border min-w-[800px]">
-          <div className="calendar-cell" />
-          {days.map((day, index) => (
-            <div 
-              key={day} 
-              className="calendar-cell day-header hover:bg-accent/10 cursor-pointer transition-colors"
-              onClick={() => handleDayClick(index, day)}
-            >
-              <span className="hidden md:inline">{day}</span>
-              <span className="md:hidden">{day.substring(0, 3)}</span>
-            </div>
-          ))}
-          
-          {timeSlots.map((time) => (
-            <React.Fragment key={time}>
-              <div className="calendar-cell time-cell">
-                {time}
+      <div className="flex flex-col h-[calc(100vh-12rem)]">
+        <ScrollArea className="flex-1">
+          <div className="calendar-grid rounded-lg overflow-hidden border min-w-[800px]">
+            <div className="calendar-cell" />
+            {days.map((day, index) => (
+              <div 
+                key={day} 
+                className="calendar-cell day-header hover:bg-accent/10 cursor-pointer transition-colors"
+                onClick={() => handleDayClick(index, day)}
+              >
+                <span className="hidden md:inline">{day}</span>
+                <span className="md:hidden">{day.substring(0, 3)}</span>
               </div>
-              {days.map((_, dayIndex) => {
-                const events = sampleEvents.filter(
-                  event => 
-                    event.day === dayIndex && 
-                    event.startTime === time
-                );
-                
-                return (
-                  <div 
-                    key={`${dayIndex}-${time}`} 
-                    className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
-                    onClick={() => handleDayClick(dayIndex, days[dayIndex])}
-                  >
-                    {events.map(event => (
-                      <div
-                        key={event.id}
-                        className={cn(
-                          "event-card",
-                          getEventStyle(event.type)
-                        )}
-                      >
-                        <span className="hidden md:inline">{event.title}</span>
-                        <span className="md:hidden">{event.title.substring(0, 3)}...</span>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })}
-            </React.Fragment>
+            ))}
+            
+            {timeSlots.map((time) => (
+              <React.Fragment key={time}>
+                <div className="calendar-cell time-cell">
+                  {time}
+                </div>
+                {days.map((_, dayIndex) => {
+                  const events = sampleEvents.filter(
+                    event => 
+                      event.day === dayIndex && 
+                      event.startTime === time
+                  );
+                  
+                  return (
+                    <div 
+                      key={`${dayIndex}-${time}`} 
+                      className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
+                      onClick={() => handleDayClick(dayIndex, days[dayIndex])}
+                    >
+                      {events.map(event => (
+                        <div
+                          key={event.id}
+                          className={cn(
+                            "event-card",
+                            getEventStyle(event.type)
+                          )}
+                        >
+                          <span className="hidden md:inline">{event.title}</span>
+                          <span className="md:hidden">{event.title.substring(0, 3)}...</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </React.Fragment>
+            ))}
+          </div>
+        </ScrollArea>
+
+        {/* Weekend section - always visible */}
+        <div className="mt-4 grid grid-cols-2 gap-4 min-w-[800px]">
+          {weekendDays.map((day, index) => (
+            <div
+              key={day}
+              className="p-4 border rounded-lg bg-background"
+              onClick={() => handleDayClick(days.length + index, day)}
+            >
+              <h3 className="text-lg font-semibold mb-2">{day}</h3>
+              <div className="text-sm text-muted-foreground">
+                Cliquez pour voir les détails
+              </div>
+            </div>
           ))}
         </div>
       </div>
