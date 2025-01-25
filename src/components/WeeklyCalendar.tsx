@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const timeSlots = Array.from({ length: 21 }, (_, i) => {
   const hour = Math.floor(i / 2) + 8;
@@ -50,8 +51,57 @@ const getEventStyle = (type: Event['type']) => {
   }
 };
 
+interface DayViewProps {
+  day: string;
+  events: Event[];
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const DayView = ({ day, events, isOpen, onClose }: DayViewProps) => {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold">{day}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className={cn(
+                "p-4 rounded-lg",
+                getEventStyle(event.type)
+              )}
+            >
+              <div className="font-semibold">{event.title}</div>
+              <div className="text-sm text-muted-foreground">
+                {event.startTime} - {event.endTime}
+              </div>
+            </div>
+          ))}
+          {events.length === 0 && (
+            <p className="text-muted-foreground text-center py-8">
+              Aucun cours prévu pour ce jour
+            </p>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export const WeeklyCalendar = () => {
   const today = new Date();
+  const [selectedDay, setSelectedDay] = useState<{ index: number; name: string } | null>(null);
+  
+  const handleDayClick = (dayIndex: number, dayName: string) => {
+    setSelectedDay({ index: dayIndex, name: dayName });
+  };
+
+  const selectedDayEvents = selectedDay
+    ? sampleEvents.filter(event => event.day === selectedDay.index)
+    : [];
   
   return (
     <div className="p-4">
@@ -67,8 +117,12 @@ export const WeeklyCalendar = () => {
       
       <div className="calendar-grid rounded-lg overflow-hidden border">
         <div className="calendar-cell" />
-        {days.map((day) => (
-          <div key={day} className="calendar-cell day-header">
+        {days.map((day, index) => (
+          <div 
+            key={day} 
+            className="calendar-cell day-header hover:bg-accent/10 cursor-pointer transition-colors"
+            onClick={() => handleDayClick(index, day)}
+          >
             {day}
           </div>
         ))}
@@ -86,7 +140,11 @@ export const WeeklyCalendar = () => {
               );
               
               return (
-                <div key={`${dayIndex}-${time}`} className="calendar-cell relative">
+                <div 
+                  key={`${dayIndex}-${time}`} 
+                  className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
+                  onClick={() => handleDayClick(dayIndex, days[dayIndex])}
+                >
                   {events.map(event => (
                     <div
                       key={event.id}
@@ -104,6 +162,15 @@ export const WeeklyCalendar = () => {
           </React.Fragment>
         ))}
       </div>
+
+      {selectedDay && (
+        <DayView
+          day={selectedDay.name}
+          events={selectedDayEvents}
+          isOpen={!!selectedDay}
+          onClose={() => setSelectedDay(null)}
+        />
+      )}
     </div>
   );
 };
