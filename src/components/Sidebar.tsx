@@ -7,7 +7,7 @@ export const Sidebar = () => {
   const isMobile = useIsMobile();
   
   return (
-    <div className={`${isMobile ? 'w-screen' : 'w-64'} border-r h-screen p-4 bg-background`}>
+    <div className={`${isMobile ? 'w-screen' : 'w-64'} border-l h-screen p-4 bg-background`}>
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Note de la semaine</h2>
         <Card className="p-4">
@@ -32,6 +32,16 @@ export const Sidebar = () => {
             </div>
           </div>
           <Button variant="ghost" className="w-full mt-2">+ Ajouter une tâche</Button>
+        </Card>
+
+        <h2 className="text-lg font-semibold">Étude</h2>
+        <Card className="p-4">
+          <ScrollArea className="h-[200px]">
+            <textarea
+              className="w-full h-full resize-none border-none focus:outline-none"
+              placeholder="Notes d'étude..."
+            />
+          </ScrollArea>
         </Card>
       </div>
     </div>

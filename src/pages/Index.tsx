@@ -16,22 +16,22 @@ const Index = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-4 left-4 z-50"
+          className="absolute top-4 right-4 z-50"
           onClick={() => setShowSidebar(!showSidebar)}
         >
           <Menu className="h-6 w-6" />
         </Button>
       )}
 
-      {/* Sidebar with responsive visibility */}
-      <div className={`${showSidebar ? 'block' : 'hidden'} ${isMobile ? 'absolute z-40 h-full bg-background' : 'relative'}`}>
-        <Sidebar />
-      </div>
-
       {/* Main content */}
       <main className="flex-1 overflow-x-auto">
         <WeeklyCalendar />
       </main>
+
+      {/* Sidebar with responsive visibility */}
+      <div className={`${showSidebar ? 'block' : 'hidden'} ${isMobile ? 'absolute right-0 z-40 h-full bg-background' : 'relative'}`}>
+        <Sidebar />
+      </div>
     </div>
   );
 };

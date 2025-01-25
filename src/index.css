@@ -56,6 +56,8 @@
 
 .day-header {
   @apply font-semibold text-lg pb-2 border-b sticky top-0 bg-background z-20;
+  position: sticky;
+  top: 0;
 }
 
 .event-card {
