@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -6,25 +6,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-// Generate all hours from 00:00 to 23:59
-const timeSlots = Array.from({ length: 48 }, (_, i) => {
-  const hour = Math.floor(i / 2);
-  const minutes = i % 2 === 0 ? "00" : "30";
-  return `${hour.toString().padStart(2, '0')}:${minutes}`;
-});
-
-const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
-const weekendDays = ['Samedi', 'Dimanche'];
-
-interface Event {
-  id: string;
-  title: string;
-  day: number;
-  startTime: string;
-  endTime: string;
-  type: 'class' | 'study' | 'other';
-}
+import { CalendarHeader } from './calendar/CalendarHeader';
+import { CalendarGrid } from './calendar/CalendarGrid';
+import { WeekendSection } from './calendar/WeekendSection';
+import { days, timeSlots, DEFAULT_SCROLL_TIME } from './calendar/constants';
+import type { Event } from './calendar/types';
 
 const sampleEvents: Event[] = [
   {
@@ -100,6 +86,7 @@ export const WeeklyCalendar = () => {
   const today = new Date();
   const [selectedDay, setSelectedDay] = useState<{ index: number; name: string } | null>(null);
   const isMobile = useIsMobile();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   
   const handleDayClick = (dayIndex: number, dayName: string) => {
     setSelectedDay({ index: dayIndex, name: dayName });
@@ -109,8 +96,15 @@ export const WeeklyCalendar = () => {
     ? sampleEvents.filter(event => event.day === selectedDay.index)
     : [];
 
-  // Find the index of 8:00 to scroll to by default
-  const defaultScrollIndex = timeSlots.findIndex(time => time === "08:00");
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const defaultTimeIndex = timeSlots.findIndex(time => time === DEFAULT_SCROLL_TIME);
+      if (defaultTimeIndex !== -1) {
+        const scrollPosition = defaultTimeIndex * 60; // 60px is the height of each time slot
+        scrollAreaRef.current.scrollTop = scrollPosition;
+      }
+    }
+  }, []);
   
   return (
     <div className="p-4 pt-16 md:pt-4">
@@ -125,73 +119,16 @@ export const WeeklyCalendar = () => {
       </div>
       
       <div className="flex flex-col h-[calc(100vh-12rem)]">
-        <ScrollArea className="flex-1">
-          <div className="calendar-grid rounded-lg overflow-hidden border min-w-[800px]">
-            <div className="calendar-cell" />
-            {days.map((day, index) => (
-              <div 
-                key={day} 
-                className="calendar-cell day-header hover:bg-accent/10 cursor-pointer transition-colors"
-                onClick={() => handleDayClick(index, day)}
-              >
-                <span className="hidden md:inline">{day}</span>
-                <span className="md:hidden">{day.substring(0, 3)}</span>
-              </div>
-            ))}
-            
-            {timeSlots.map((time) => (
-              <React.Fragment key={time}>
-                <div className="calendar-cell time-cell">
-                  {time}
-                </div>
-                {days.map((_, dayIndex) => {
-                  const events = sampleEvents.filter(
-                    event => 
-                      event.day === dayIndex && 
-                      event.startTime === time
-                  );
-                  
-                  return (
-                    <div 
-                      key={`${dayIndex}-${time}`} 
-                      className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
-                      onClick={() => handleDayClick(dayIndex, days[dayIndex])}
-                    >
-                      {events.map(event => (
-                        <div
-                          key={event.id}
-                          className={cn(
-                            "event-card",
-                            getEventStyle(event.type)
-                          )}
-                        >
-                          <span className="hidden md:inline">{event.title}</span>
-                          <span className="md:hidden">{event.title.substring(0, 3)}...</span>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })}
-              </React.Fragment>
-            ))}
-          </div>
+        <CalendarHeader onDayClick={handleDayClick} />
+        <ScrollArea ref={scrollAreaRef} className="flex-1">
+          <CalendarGrid 
+            events={sampleEvents}
+            onDayClick={handleDayClick}
+            getEventStyle={getEventStyle}
+          />
         </ScrollArea>
 
-        {/* Weekend section - always visible */}
-        <div className="mt-4 grid grid-cols-2 gap-4 min-w-[800px]">
-          {weekendDays.map((day, index) => (
-            <div
-              key={day}
-              className="p-4 border rounded-lg bg-background"
-              onClick={() => handleDayClick(days.length + index, day)}
-            >
-              <h3 className="text-lg font-semibold mb-2">{day}</h3>
-              <div className="text-sm text-muted-foreground">
-                Cliquez pour voir les détails
-              </div>
-            </div>
-          ))}
-        </div>
+        <WeekendSection onDayClick={handleDayClick} daysLength={days.length} />
       </div>
 
       {selectedDay && (
