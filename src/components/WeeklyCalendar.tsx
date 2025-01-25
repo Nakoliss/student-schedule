@@ -116,12 +116,6 @@ export const WeeklyCalendar = () => {
   
   return (
     <div className="p-4 pt-16 md:pt-4">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <h1 className="text-xl md:text-2xl font-bold">
-          Semaine du {format(currentDate, 'dd MMMM yyyy', { locale: fr })}
-        </h1>
-      </div>
-      
       <div className="flex flex-col h-[calc(100vh-12rem)]">
         <div className="sticky top-0 z-10 bg-background">
           <CalendarHeader 
