@@ -24,6 +24,10 @@ export const CalendarHeader = ({ onDayClick, currentDate, onWeekChange }: Calend
     onWeekChange(newDate);
   };
 
+  const handleToday = () => {
+    onWeekChange(new Date());
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center mb-4">
@@ -33,6 +37,9 @@ export const CalendarHeader = ({ onDayClick, currentDate, onWeekChange }: Calend
           </Button>
           <Button variant="outline" size="icon" onClick={handleNextWeek}>
             <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" onClick={handleToday}>
+            Aujourd'hui
           </Button>
         </div>
       </div>
