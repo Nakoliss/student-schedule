@@ -3,6 +3,8 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 const timeSlots = Array.from({ length: 21 }, (_, i) => {
   const hour = Math.floor(i / 2) + 8;
@@ -61,7 +63,7 @@ interface DayViewProps {
 const DayView = ({ day, events, isOpen, onClose }: DayViewProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl mx-4">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">{day}</DialogTitle>
         </DialogHeader>
@@ -94,6 +96,7 @@ const DayView = ({ day, events, isOpen, onClose }: DayViewProps) => {
 export const WeeklyCalendar = () => {
   const today = new Date();
   const [selectedDay, setSelectedDay] = useState<{ index: number; name: string } | null>(null);
+  const isMobile = useIsMobile();
   
   const handleDayClick = (dayIndex: number, dayName: string) => {
     setSelectedDay({ index: dayIndex, name: dayName });
@@ -104,63 +107,67 @@ export const WeeklyCalendar = () => {
     : [];
   
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">
+    <div className="p-4 pt-16 md:pt-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h1 className="text-xl md:text-2xl font-bold">
           Semaine du {format(today, 'dd MMMM yyyy', { locale: fr })}
         </h1>
-        <div className="space-x-2">
-          <button className="btn btn-secondary">Aujourd'hui</button>
-          <button className="btn btn-outline">Ajouter un cours</button>
+        <div className="flex gap-2 w-full md:w-auto">
+          <Button className="flex-1 md:flex-none" variant="outline">Aujourd'hui</Button>
+          <Button className="flex-1 md:flex-none">Ajouter un cours</Button>
         </div>
       </div>
       
-      <div className="calendar-grid rounded-lg overflow-hidden border">
-        <div className="calendar-cell" />
-        {days.map((day, index) => (
-          <div 
-            key={day} 
-            className="calendar-cell day-header hover:bg-accent/10 cursor-pointer transition-colors"
-            onClick={() => handleDayClick(index, day)}
-          >
-            {day}
-          </div>
-        ))}
-        
-        {timeSlots.map((time) => (
-          <React.Fragment key={time}>
-            <div className="calendar-cell time-cell">
-              {time}
+      <div className="overflow-x-auto">
+        <div className="calendar-grid rounded-lg overflow-hidden border min-w-[800px]">
+          <div className="calendar-cell" />
+          {days.map((day, index) => (
+            <div 
+              key={day} 
+              className="calendar-cell day-header hover:bg-accent/10 cursor-pointer transition-colors"
+              onClick={() => handleDayClick(index, day)}
+            >
+              <span className="hidden md:inline">{day}</span>
+              <span className="md:hidden">{day.substring(0, 3)}</span>
             </div>
-            {days.map((_, dayIndex) => {
-              const events = sampleEvents.filter(
-                event => 
-                  event.day === dayIndex && 
-                  event.startTime === time
-              );
-              
-              return (
-                <div 
-                  key={`${dayIndex}-${time}`} 
-                  className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
-                  onClick={() => handleDayClick(dayIndex, days[dayIndex])}
-                >
-                  {events.map(event => (
-                    <div
-                      key={event.id}
-                      className={cn(
-                        "event-card",
-                        getEventStyle(event.type)
-                      )}
-                    >
-                      {event.title}
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
-          </React.Fragment>
-        ))}
+          ))}
+          
+          {timeSlots.map((time) => (
+            <React.Fragment key={time}>
+              <div className="calendar-cell time-cell">
+                {time}
+              </div>
+              {days.map((_, dayIndex) => {
+                const events = sampleEvents.filter(
+                  event => 
+                    event.day === dayIndex && 
+                    event.startTime === time
+                );
+                
+                return (
+                  <div 
+                    key={`${dayIndex}-${time}`} 
+                    className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
+                    onClick={() => handleDayClick(dayIndex, days[dayIndex])}
+                  >
+                    {events.map(event => (
+                      <div
+                        key={event.id}
+                        className={cn(
+                          "event-card",
+                          getEventStyle(event.type)
+                        )}
+                      >
+                        <span className="hidden md:inline">{event.title}</span>
+                        <span className="md:hidden">{event.title.substring(0, 3)}...</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
 
       {selectedDay && (

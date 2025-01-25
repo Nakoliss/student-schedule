@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Sidebar = () => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="w-64 border-r h-screen p-4">
+    <div className={`${isMobile ? 'w-screen' : 'w-64'} border-r h-screen p-4 bg-background`}>
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Note de la semaine</h2>
         <Card className="p-4">
