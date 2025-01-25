@@ -4,7 +4,6 @@ import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CalendarHeader } from './calendar/CalendarHeader';
 import { CalendarGrid } from './calendar/CalendarGrid';
@@ -83,7 +82,7 @@ const DayView = ({ day, events, isOpen, onClose }: DayViewProps) => {
 };
 
 export const WeeklyCalendar = () => {
-  const today = new Date();
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<{ index: number; name: string } | null>(null);
   const isMobile = useIsMobile();
   const gridRef = useRef<HTMLDivElement>(null);
@@ -97,14 +96,12 @@ export const WeeklyCalendar = () => {
     : [];
 
   useEffect(() => {
-    // Find the index of the default time in the timeSlots array
     const defaultTimeIndex = timeSlots.findIndex(time => time === DEFAULT_SCROLL_TIME);
     
     if (defaultTimeIndex !== -1 && gridRef.current) {
       const rowHeight = 60; // Height of each time slot in pixels
       const scrollPosition = defaultTimeIndex * rowHeight;
       
-      // Use requestAnimationFrame to ensure the scroll happens after render
       requestAnimationFrame(() => {
         if (gridRef.current) {
           const scrollContainer = gridRef.current.closest('[data-radix-scroll-area-viewport]');
@@ -121,17 +118,17 @@ export const WeeklyCalendar = () => {
     <div className="p-4 pt-16 md:pt-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h1 className="text-xl md:text-2xl font-bold">
-          Semaine du {format(today, 'dd MMMM yyyy', { locale: fr })}
+          Semaine du {format(currentDate, 'dd MMMM yyyy', { locale: fr })}
         </h1>
-        <div className="flex gap-2 w-full md:w-auto">
-          <Button className="flex-1 md:flex-none" variant="outline">Aujourd'hui</Button>
-          <Button className="flex-1 md:flex-none">Ajouter un cours</Button>
-        </div>
       </div>
       
       <div className="flex flex-col h-[calc(100vh-12rem)]">
         <div className="sticky top-0 z-10 bg-background">
-          <CalendarHeader onDayClick={handleDayClick} />
+          <CalendarHeader 
+            onDayClick={handleDayClick} 
+            currentDate={currentDate}
+            onWeekChange={setCurrentDate}
+          />
         </div>
         <ScrollArea className="flex-1">
           <div ref={gridRef}>
