@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
@@ -9,8 +9,12 @@ const Landing = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-50 to-white p-4">
       <div className="text-center space-y-8 max-w-2xl">
         {/* Logo */}
-        <div className="w-24 h-24 mx-auto bg-primary rounded-xl flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
-          <Calendar className="w-12 h-12 text-white" />
+        <div className="w-48 h-48 mx-auto">
+          <img 
+            src="/lovable-uploads/aa7999c2-bb97-474c-8877-97dd11d504cb.png" 
+            alt="Calendrier Scolaire Logo" 
+            className="w-full h-full object-contain hover:scale-105 transition-transform"
+          />
         </div>
         
         {/* Title */}
