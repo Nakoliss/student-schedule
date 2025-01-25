@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
@@ -9,14 +9,14 @@ const Landing = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-50 to-white p-4">
       <div className="text-center space-y-8 max-w-2xl">
         {/* Logo */}
-        <div className="w-24 h-24 mx-auto bg-primary rounded-xl flex items-center justify-center">
-          <span className="text-4xl text-white font-bold">SS</span>
+        <div className="w-24 h-24 mx-auto bg-primary rounded-xl flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
+          <Calendar className="w-12 h-12 text-white" />
         </div>
         
         {/* Title */}
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-            Synergy Scolaire
+            Calendrier Scolaire
           </h1>
           <p className="text-xl text-gray-600">
             Votre emploi du temps simplifié
