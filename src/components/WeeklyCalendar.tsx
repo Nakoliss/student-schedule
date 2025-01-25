@@ -86,7 +86,7 @@ export const WeeklyCalendar = () => {
   const today = new Date();
   const [selectedDay, setSelectedDay] = useState<{ index: number; name: string } | null>(null);
   const isMobile = useIsMobile();
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   
   const handleDayClick = (dayIndex: number, dayName: string) => {
     setSelectedDay({ index: dayIndex, name: dayName });
@@ -97,12 +97,23 @@ export const WeeklyCalendar = () => {
     : [];
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      const defaultTimeIndex = timeSlots.findIndex(time => time === DEFAULT_SCROLL_TIME);
-      if (defaultTimeIndex !== -1) {
-        const scrollPosition = defaultTimeIndex * 60; // 60px is the height of each time slot
-        scrollAreaRef.current.scrollTop = scrollPosition;
-      }
+    // Find the index of the default time in the timeSlots array
+    const defaultTimeIndex = timeSlots.findIndex(time => time === DEFAULT_SCROLL_TIME);
+    
+    if (defaultTimeIndex !== -1 && gridRef.current) {
+      const rowHeight = 60; // Height of each time slot in pixels
+      const scrollPosition = defaultTimeIndex * rowHeight;
+      
+      // Use requestAnimationFrame to ensure the scroll happens after render
+      requestAnimationFrame(() => {
+        if (gridRef.current) {
+          const scrollContainer = gridRef.current.closest('[data-radix-scroll-area-viewport]');
+          if (scrollContainer) {
+            scrollContainer.scrollTop = scrollPosition;
+            console.log('Scrolling to position:', scrollPosition);
+          }
+        }
+      });
     }
   }, []);
   
@@ -122,12 +133,14 @@ export const WeeklyCalendar = () => {
         <div className="sticky top-0 z-10 bg-background">
           <CalendarHeader onDayClick={handleDayClick} />
         </div>
-        <ScrollArea ref={scrollAreaRef} className="flex-1">
-          <CalendarGrid 
-            events={sampleEvents}
-            onDayClick={handleDayClick}
-            getEventStyle={getEventStyle}
-          />
+        <ScrollArea className="flex-1">
+          <div ref={gridRef}>
+            <CalendarGrid 
+              events={sampleEvents}
+              onDayClick={handleDayClick}
+              getEventStyle={getEventStyle}
+            />
+          </div>
         </ScrollArea>
 
         <WeekendSection onDayClick={handleDayClick} daysLength={days.length} />
