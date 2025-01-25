@@ -1,3 +1,4 @@
+import React from 'react';
 import { days } from './constants';
 
 interface CalendarHeaderProps {
@@ -6,16 +7,15 @@ interface CalendarHeaderProps {
 
 export const CalendarHeader = ({ onDayClick }: CalendarHeaderProps) => {
   return (
-    <div className="calendar-grid rounded-t-lg border-b sticky top-0 z-30 bg-background">
-      <div className="calendar-cell" />
+    <div className="grid grid-cols-[60px_repeat(5,1fr)] border-b">
+      <div className="h-12 border-r" />
       {days.map((day, index) => (
-        <div 
-          key={day} 
-          className="calendar-cell day-header hover:bg-accent/10 cursor-pointer transition-colors"
+        <div
+          key={day}
           onClick={() => onDayClick(index, day)}
+          className="h-12 flex items-center justify-center border-r font-medium cursor-pointer hover:bg-accent/10 transition-colors"
         >
-          <span className="hidden md:inline">{day}</span>
-          <span className="md:hidden">{day.substring(0, 3)}</span>
+          {day}
         </div>
       ))}
     </div>

@@ -119,7 +119,9 @@ export const WeeklyCalendar = () => {
       </div>
       
       <div className="flex flex-col h-[calc(100vh-12rem)]">
-        <CalendarHeader onDayClick={handleDayClick} />
+        <div className="sticky top-0 z-10 bg-background">
+          <CalendarHeader onDayClick={handleDayClick} />
+        </div>
         <ScrollArea ref={scrollAreaRef} className="flex-1">
           <CalendarGrid 
             events={sampleEvents}
