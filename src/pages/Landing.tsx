@@ -20,7 +20,7 @@ const Landing = () => {
         {/* Title */}
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-            Calendrier Scolaire
+            Calendrier ScolaireTTTTT
           </h1>
           <p className="text-xl text-gray-600">
             Votre emploi du temps simplifié
