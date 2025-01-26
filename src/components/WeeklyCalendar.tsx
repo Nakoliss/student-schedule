@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CalendarHeader } from './calendar/CalendarHeader';
 import { CalendarGrid } from './calendar/CalendarGrid';
 import { WeekendSection } from './calendar/WeekendSection';
-import { DayView } from './calendar/DayView';
 import { getEventStyle } from './calendar/utils';
 import { days, timeSlots, DEFAULT_SCROLL_TIME } from './calendar/constants';
 import type { Event } from './calendar/types';
@@ -30,17 +30,13 @@ const sampleEvents: Event[] = [
 
 export const WeeklyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState<{ index: number; name: string } | null>(null);
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const gridRef = useRef<HTMLDivElement>(null);
   
-  const handleDayClick = (dayIndex: number, dayName: string) => {
-    setSelectedDay({ index: dayIndex, name: dayName });
+  const handleDayClick = (dayIndex: number) => {
+    navigate(`/day/${dayIndex}`);
   };
-
-  const selectedDayEvents = selectedDay
-    ? sampleEvents.filter(event => event.day === selectedDay.index)
-    : [];
 
   useEffect(() => {
     const defaultTimeIndex = timeSlots.findIndex(time => time === DEFAULT_SCROLL_TIME);
@@ -83,14 +79,6 @@ export const WeeklyCalendar = () => {
 
         <WeekendSection onDayClick={handleDayClick} daysLength={days.length} />
       </div>
-
-      <DayView
-        day={selectedDay?.name || ''}
-        events={selectedDayEvents}
-        isOpen={!!selectedDay}
-        onClose={() => setSelectedDay(null)}
-        getEventStyle={getEventStyle}
-      />
     </div>
   );
 };
