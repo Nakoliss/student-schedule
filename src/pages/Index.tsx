@@ -10,8 +10,11 @@ const Index = () => {
   const [showSidebar, setShowSidebar] = useState(!isMobile);
 
   const handleAddCourse = () => {
-    // TODO: Implement course creation
-    console.log("Add course clicked");
+    const calendarComponent = document.querySelector('[data-radix-scroll-area-viewport]');
+    if (calendarComponent) {
+      const event = new CustomEvent('openAddCourse');
+      calendarComponent.dispatchEvent(event);
+    }
   };
 
   return (

@@ -6,31 +6,14 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { Event } from "@/components/calendar/types";
 
-const sampleEvents: Event[] = [
-  {
-    id: '1',
-    title: 'Yoga',
-    day: 0,
-    startTime: '8:00',
-    endTime: '10:00',
-    type: 'class'
-  },
-  {
-    id: '2',
-    title: 'Design',
-    day: 1,
-    startTime: '14:00',
-    endTime: '18:00',
-    type: 'class'
-  }
-];
-
 const DayView = () => {
   const { dayIndex } = useParams();
   const navigate = useNavigate();
   
-  const dayEvents = sampleEvents.filter(
-    event => event.day === Number(dayIndex)
+  // Access the events from the calendar
+  const allEvents = (window as any).calendarEvents || [];
+  const dayEvents = allEvents.filter(
+    (event: Event) => event.day === Number(dayIndex)
   );
   
   const dayName = days[Number(dayIndex)];

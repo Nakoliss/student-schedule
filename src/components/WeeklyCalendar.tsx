@@ -5,19 +5,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CalendarHeader } from './calendar/CalendarHeader';
 import { CalendarGrid } from './calendar/CalendarGrid';
 import { WeekendSection } from './calendar/WeekendSection';
+import { AddCourseDialog } from './calendar/AddCourseDialog';
 import { getEventStyle } from './calendar/utils';
 import { days, timeSlots, DEFAULT_SCROLL_TIME } from './calendar/constants';
 import type { Event } from './calendar/types';
 
-const sampleEvents: Event[] = [
-  {
-    id: '1',
-    title: 'Yoga',
-    day: 0,
-    startTime: '8:00',
-    endTime: '10:00',
-    type: 'class'
-  },
+const initialEvents: Event[] = [
   {
     id: '2',
     title: 'Design',
@@ -30,6 +23,8 @@ const sampleEvents: Event[] = [
 
 export const WeeklyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [events, setEvents] = useState<Event[]>(initialEvents);
+  const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const gridRef = useRef<HTMLDivElement>(null);
@@ -37,6 +32,18 @@ export const WeeklyCalendar = () => {
   const handleDayClick = (dayIndex: number) => {
     navigate(`/day/${dayIndex}`);
   };
+
+  const handleAddCourse = (course: Omit<Event, "id">) => {
+    const newCourse: Event = {
+      ...course,
+      id: crypto.randomUUID()
+    };
+    setEvents(prev => [...prev, newCourse]);
+    console.log("New course added:", newCourse);
+  };
+
+  // Export the events so they can be accessed by other components
+  (window as any).calendarEvents = events;
 
   useEffect(() => {
     const defaultTimeIndex = timeSlots.findIndex(time => time === DEFAULT_SCROLL_TIME);
@@ -70,7 +77,7 @@ export const WeeklyCalendar = () => {
         <ScrollArea className="flex-1">
           <div ref={gridRef}>
             <CalendarGrid 
-              events={sampleEvents}
+              events={events}
               onDayClick={handleDayClick}
               getEventStyle={getEventStyle}
             />
@@ -79,6 +86,12 @@ export const WeeklyCalendar = () => {
 
         <WeekendSection onDayClick={handleDayClick} daysLength={days.length} />
       </div>
+
+      <AddCourseDialog
+        isOpen={isAddCourseOpen}
+        onClose={() => setIsAddCourseOpen(false)}
+        onAddCourse={handleAddCourse}
+      />
     </div>
   );
 };
