@@ -9,7 +9,7 @@ export const Sidebar = () => {
   return (
     <div className={`${isMobile ? 'w-screen' : 'w-64'} border-l h-screen p-4 bg-background`}>
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Note de la semaine</h2>
+        <h2 className="text-xl font-semibold mb-2">Notes de la semaine</h2>
         <Card className="p-4">
           <ScrollArea className="h-[200px]">
             <textarea
