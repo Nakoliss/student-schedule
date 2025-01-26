@@ -10,7 +10,6 @@ const DayView = () => {
   const { dayIndex } = useParams();
   const navigate = useNavigate();
   
-  // Access the events from the calendar
   const allEvents = (window as any).calendarEvents || [];
   const dayEvents = allEvents.filter(
     (event: Event) => event.day === Number(dayIndex)
@@ -19,6 +18,10 @@ const DayView = () => {
   const dayName = days[Number(dayIndex)];
   const today = new Date();
   const formattedDate = format(today, "d MMMM yyyy", { locale: fr });
+
+  const handleCourseClick = (courseId: string, courseTitle: string) => {
+    navigate(`/course/${courseId}`, { state: { courseTitle } });
+  };
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -39,7 +42,8 @@ const DayView = () => {
           {dayEvents.map((event) => (
             <div 
               key={event.id}
-              className="p-6 bg-white rounded-lg shadow-md"
+              className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => handleCourseClick(event.id, event.title)}
             >
               <div className="text-2xl font-handwriting mb-2">
                 {event.startTime} - {event.endTime} → {event.title}

@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import DayView from "./pages/DayView";
+import CourseView from "./pages/CourseView";
+import CourseNotes from "./pages/CourseNotes";
+import NoteEditor from "./pages/NoteEditor";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +22,9 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/calendar" element={<Index />} />
           <Route path="/day/:dayIndex" element={<DayView />} />
+          <Route path="/course/:courseId" element={<CourseView />} />
+          <Route path="/course/:courseId/notes" element={<CourseNotes />} />
+          <Route path="/course/:courseId/notes/:noteId" element={<NoteEditor />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
