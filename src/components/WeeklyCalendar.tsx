@@ -10,20 +10,17 @@ import { getEventStyle } from './calendar/utils';
 import { days, timeSlots, DEFAULT_SCROLL_TIME } from './calendar/constants';
 import type { Event } from './calendar/types';
 
-const initialEvents: Event[] = [
-  {
-    id: '2',
-    title: 'Design',
-    day: 1,
-    startTime: '14:00',
-    endTime: '18:00',
-    type: 'class'
-  }
-];
+const STORAGE_KEY = 'calendar_events';
+
+const loadEventsFromStorage = (): Event[] => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  console.log('Loading events from storage:', stored);
+  return stored ? JSON.parse(stored) : [];
+};
 
 export const WeeklyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState<Event[]>(initialEvents);
+  const [events, setEvents] = useState<Event[]>(loadEventsFromStorage);
   const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -38,8 +35,10 @@ export const WeeklyCalendar = () => {
       ...course,
       id: crypto.randomUUID()
     };
-    setEvents(prev => [...prev, newCourse]);
-    console.log("New course added:", newCourse);
+    const updatedEvents = [...events, newCourse];
+    setEvents(updatedEvents);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEvents));
+    console.log("New course added and saved:", newCourse);
   };
 
   // Export the events so they can be accessed by other components
