@@ -63,6 +63,19 @@ export const WeeklyCalendar = () => {
       });
     }
   }, []);
+
+  // Listen for the custom event to open the dialog
+  useEffect(() => {
+    const handleOpenAddCourse = () => {
+      console.log("Opening add course dialog");
+      setIsAddCourseOpen(true);
+    };
+
+    document.addEventListener('openAddCourse', handleOpenAddCourse);
+    return () => {
+      document.removeEventListener('openAddCourse', handleOpenAddCourse);
+    };
+  }, []);
   
   return (
     <div className="p-4 pt-16 md:pt-4">
