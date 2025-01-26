@@ -38,8 +38,8 @@ const Index = () => {
         Ajouter un cours
       </Button>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-x-auto">
+      {/* Main content with added top padding */}
+      <main className="flex-1 overflow-x-auto pt-20">
         <WeeklyCalendar />
       </main>
 
