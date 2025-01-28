@@ -45,7 +45,7 @@ const Index = () => {
 
       {/* Sidebar with responsive visibility and adjusted spacing below button */}
       <div className={`${showSidebar ? 'block' : 'hidden'} ${isMobile ? 'absolute right-0 z-40 h-full bg-background' : 'relative'}`}>
-        <div className="pt-10">
+        <div className="pt-16">
           <Sidebar />
         </div>
       </div>
