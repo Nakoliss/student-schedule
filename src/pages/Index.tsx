@@ -38,14 +38,16 @@ const Index = () => {
         Ajouter un cours
       </Button>
 
-      {/* Main content with added top padding */}
-      <main className="flex-1 overflow-x-auto pt-20">
+      {/* Main content without the extra top padding */}
+      <main className="flex-1 overflow-x-auto">
         <WeeklyCalendar />
       </main>
 
-      {/* Sidebar with responsive visibility */}
+      {/* Sidebar with responsive visibility and increased spacing below button */}
       <div className={`${showSidebar ? 'block' : 'hidden'} ${isMobile ? 'absolute right-0 z-40 h-full bg-background' : 'relative'}`}>
-        <Sidebar />
+        <div className="pt-20">
+          <Sidebar />
+        </div>
       </div>
     </div>
   );
