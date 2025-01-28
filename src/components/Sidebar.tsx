@@ -19,7 +19,7 @@ export const Sidebar = () => {
           </ScrollArea>
         </Card>
         
-        <h2 className="text-lg font-semibold">À faire</h2>
+        <h2 className="text-lg font-semibold">À faire cette semaine</h2>
         <Card className="p-4">
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
@@ -34,7 +34,7 @@ export const Sidebar = () => {
           <Button variant="ghost" className="w-full mt-2">+ Ajouter une tâche</Button>
         </Card>
 
-        <h2 className="text-lg font-semibold">Étude</h2>
+        <h2 className="text-lg font-semibold">Étude de la semaine</h2>
         <Card className="p-4">
           <ScrollArea className="h-[200px]">
             <textarea
