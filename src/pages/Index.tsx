@@ -43,9 +43,9 @@ const Index = () => {
         <WeeklyCalendar />
       </main>
 
-      {/* Sidebar with responsive visibility and increased spacing below button */}
+      {/* Sidebar with responsive visibility and adjusted spacing below button */}
       <div className={`${showSidebar ? 'block' : 'hidden'} ${isMobile ? 'absolute right-0 z-40 h-full bg-background' : 'relative'}`}>
-        <div className="pt-20">
+        <div className="pt-10">
           <Sidebar />
         </div>
       </div>
