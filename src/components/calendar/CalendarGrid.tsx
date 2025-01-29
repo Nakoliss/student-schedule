@@ -2,7 +2,6 @@ import React from 'react';
 import { timeSlots, days } from './constants';
 import { Event } from './types';
 import { cn } from '@/lib/utils';
-import { ArrowUpDown } from 'lucide-react';
 
 interface CalendarGridProps {
   events: Event[];
@@ -78,9 +77,9 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                           <div className="text-sm text-center">{formatTime(event.startTime)}</div>
                         </div>
                         <div className="flex-1 flex items-center justify-center">
-                          <div className="h-full w-[1px] bg-black relative">
-                            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 border-t-2 border-l-2 border-black -rotate-45"></div>
-                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 border-b-2 border-r-2 border-black rotate-135"></div>
+                          <div className="h-[80%] w-[1px] bg-black relative">
+                            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 border-t-2 border-r-2 border-black rotate-45"></div>
+                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 border-b-2 border-l-2 border-black -rotate-45"></div>
                           </div>
                         </div>
                         <div className="text-black text-sm text-center">
