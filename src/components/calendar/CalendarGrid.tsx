@@ -53,11 +53,11 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                     <div
                       key={event.id}
                       className={cn(
-                        "event-card",
+                        "event-card absolute left-0 right-0 m-1 p-1 rounded text-xs overflow-hidden",
                         getEventStyle(event.type)
                       )}
                       style={{
-                        height: `${duration * 100}%`,
+                        height: `calc(${duration * 100}% - 2px)`,
                         zIndex: 10
                       }}
                     >
