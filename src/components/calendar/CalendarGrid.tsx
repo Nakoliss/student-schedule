@@ -24,10 +24,14 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
 
   const shouldShowEvent = (event: Event, time: string, dayIndex: number) => {
     if (event.day !== dayIndex) return false;
+    
+    const timeIndex = timeSlots.indexOf(time);
     const startIndex = timeSlots.indexOf(event.startTime);
-    const currentIndex = timeSlots.indexOf(time);
     const endIndex = timeSlots.indexOf(event.endTime);
-    return currentIndex >= startIndex && currentIndex < endIndex;
+    
+    console.log(`Checking event ${event.title} at time ${time} (index ${timeIndex}) - start: ${startIndex}, end: ${endIndex}`);
+    
+    return timeIndex >= startIndex && timeIndex < endIndex;
   };
 
   const formatTime = (time: string) => {
@@ -41,10 +45,11 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       {timeSlots.map((time) => (
         <React.Fragment key={time}>
           <div className="calendar-cell time-cell">
-            {time}
+            {formatTime(time)}
           </div>
           {days.map((_, dayIndex) => {
             const dayEvents = events.filter(event => shouldShowEvent(event, time, dayIndex));
+            console.log(`Time ${time}, Day ${dayIndex}, Events:`, dayEvents);
             
             return (
               <div 
