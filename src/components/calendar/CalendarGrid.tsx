@@ -49,15 +49,18 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                   if (!isEventStartingAt(event, time)) return null;
                   
                   const duration = getEventDuration(event);
+                  const heightInPixels = duration * 60; // Each time slot is 60px high
+                  
                   return (
                     <div
                       key={event.id}
                       className={cn(
-                        "event-card absolute left-0 right-0 m-1 p-1 rounded text-xs overflow-hidden",
+                        "event-card absolute inset-x-0 mx-1",
                         getEventStyle(event.type)
                       )}
                       style={{
-                        height: `calc(${duration * 100}% - 2px)`,
+                        height: `${heightInPixels}px`,
+                        top: '1px',
                         zIndex: 10
                       }}
                     >

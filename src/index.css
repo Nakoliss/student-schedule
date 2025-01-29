@@ -74,7 +74,7 @@
 }
 
 .event-card {
-  @apply rounded-md p-2 mb-1 text-sm cursor-pointer transition-all;
+  @apply rounded-md p-2 text-sm cursor-pointer transition-all;
 }
 
 .event-card:hover {
