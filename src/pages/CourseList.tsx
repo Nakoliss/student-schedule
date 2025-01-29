@@ -5,10 +5,12 @@ import { AddCourseDialog } from "@/components/calendar/AddCourseDialog";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { days } from "@/components/calendar/constants";
+import { useToast } from "@/components/ui/use-toast";
 
 const CourseList = () => {
   const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
-  const { events } = useEvents();
+  const { events, createEvent } = useEvents();
+  const { toast } = useToast();
 
   const handleAddCourse = () => {
     console.log("Opening add course dialog from CourseList");
@@ -53,9 +55,16 @@ const CourseList = () => {
         isOpen={isAddCourseOpen}
         onClose={() => setIsAddCourseOpen(false)}
         onAddCourse={(course) => {
-          const event = new CustomEvent('openAddCourse');
-          document.dispatchEvent(event);
+          console.log("Creating new course:", course);
+          createEvent({
+            ...course,
+            id: crypto.randomUUID()
+          });
           setIsAddCourseOpen(false);
+          toast({
+            title: "Cours ajouté",
+            description: "Le cours a été ajouté avec succès"
+          });
         }}
       />
     </div>
