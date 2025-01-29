@@ -10,6 +10,23 @@ interface CalendarGridProps {
 }
 
 export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGridProps) => {
+  const getEventDuration = (event: Event) => {
+    const startIndex = timeSlots.indexOf(event.startTime);
+    const endIndex = timeSlots.indexOf(event.endTime);
+    return endIndex - startIndex;
+  };
+
+  const isEventStartingAt = (event: Event, time: string) => {
+    return event.startTime === time;
+  };
+
+  const shouldShowEvent = (event: Event, time: string) => {
+    const startIndex = timeSlots.indexOf(event.startTime);
+    const currentIndex = timeSlots.indexOf(time);
+    const endIndex = timeSlots.indexOf(event.endTime);
+    return currentIndex >= startIndex && currentIndex < endIndex;
+  };
+
   return (
     <div className="calendar-grid">
       {timeSlots.map((time) => (
@@ -19,9 +36,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
           </div>
           {days.map((_, dayIndex) => {
             const dayEvents = events.filter(
-              event => 
-                event.day === dayIndex && 
-                event.startTime === time
+              event => event.day === dayIndex && shouldShowEvent(event, time)
             );
             
             return (
@@ -30,18 +45,27 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                 className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
                 onClick={() => onDayClick(dayIndex, days[dayIndex])}
               >
-                {dayEvents.map(event => (
-                  <div
-                    key={event.id}
-                    className={cn(
-                      "event-card",
-                      getEventStyle(event.type)
-                    )}
-                  >
-                    <span className="hidden md:inline">{event.title}</span>
-                    <span className="md:hidden">{event.title.substring(0, 3)}...</span>
-                  </div>
-                ))}
+                {dayEvents.map(event => {
+                  if (!isEventStartingAt(event, time)) return null;
+                  
+                  const duration = getEventDuration(event);
+                  return (
+                    <div
+                      key={event.id}
+                      className={cn(
+                        "event-card",
+                        getEventStyle(event.type)
+                      )}
+                      style={{
+                        height: `${duration * 100}%`,
+                        zIndex: 10
+                      }}
+                    >
+                      <span className="hidden md:inline">{event.title}</span>
+                      <span className="md:hidden">{event.title.substring(0, 3)}...</span>
+                    </div>
+                  );
+                })}
               </div>
             );
           })}

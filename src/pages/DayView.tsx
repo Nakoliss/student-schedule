@@ -4,15 +4,15 @@ import { ArrowLeft } from "lucide-react";
 import { days } from "@/components/calendar/constants";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import type { Event } from "@/components/calendar/types";
+import { useEvents } from "@/hooks/use-events";
 
 const DayView = () => {
   const { dayIndex } = useParams();
   const navigate = useNavigate();
+  const { events } = useEvents();
   
-  const allEvents = (window as any).calendarEvents || [];
-  const dayEvents = allEvents.filter(
-    (event: Event) => event.day === Number(dayIndex)
+  const dayEvents = events.filter(
+    (event) => event.day === Number(dayIndex)
   );
   
   const dayName = days[Number(dayIndex)];
@@ -51,7 +51,11 @@ const DayView = () => {
             </div>
           ))}
         </div>
-      ) : null}
+      ) : (
+        <p className="text-center text-muted-foreground">
+          Aucun cours prévu pour ce jour
+        </p>
+      )}
     </div>
   );
 };
