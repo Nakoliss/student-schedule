@@ -10,17 +10,20 @@ interface CalendarGridProps {
 }
 
 export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGridProps) => {
+  console.log('Events received in CalendarGrid:', events); // Debug log
+
   const getEventDuration = (event: Event) => {
     const startIndex = timeSlots.indexOf(event.startTime);
     const endIndex = timeSlots.indexOf(event.endTime);
     return endIndex - startIndex;
   };
 
-  const isEventStartingAt = (event: Event, time: string) => {
-    return event.startTime === time;
+  const isEventStartingAt = (event: Event, time: string, dayIndex: number) => {
+    return event.startTime === time && event.day === dayIndex;
   };
 
-  const shouldShowEvent = (event: Event, time: string) => {
+  const shouldShowEvent = (event: Event, time: string, dayIndex: number) => {
+    if (event.day !== dayIndex) return false;
     const startIndex = timeSlots.indexOf(event.startTime);
     const currentIndex = timeSlots.indexOf(time);
     const endIndex = timeSlots.indexOf(event.endTime);
@@ -42,7 +45,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
           </div>
           {days.map((_, dayIndex) => {
             const dayEvents = events.filter(
-              event => event.day === dayIndex && shouldShowEvent(event, time)
+              event => shouldShowEvent(event, time, dayIndex)
             );
             
             return (
@@ -52,7 +55,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                 onClick={() => onDayClick(dayIndex, days[dayIndex])}
               >
                 {dayEvents.map(event => {
-                  if (!isEventStartingAt(event, time)) return null;
+                  if (!isEventStartingAt(event, time, dayIndex)) return null;
                   
                   const duration = getEventDuration(event);
                   const heightInPixels = duration * 60;
