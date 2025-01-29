@@ -2,7 +2,7 @@ import React from 'react';
 import { timeSlots, days } from './constants';
 import { Event } from './types';
 import { cn } from '@/lib/utils';
-import { ArrowDown } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 
 interface CalendarGridProps {
   events: Event[];
@@ -72,12 +72,16 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                       }}
                     >
                       <div className="flex flex-col h-full justify-between p-1">
-                        <span className="hidden md:inline">{event.title}</span>
-                        <span className="md:hidden">{event.title.substring(0, 3)}...</span>
-                        <div className="flex flex-col items-center text-black">
-                          <span className="text-sm font-medium">{formatTime(event.startTime)}</span>
-                          <ArrowDown className="h-4 w-4 my-1" />
-                          <span className="text-sm font-medium">{formatTime(event.endTime)}</span>
+                        <div className="text-black">
+                          <span className="hidden md:inline font-medium">{event.title}</span>
+                          <span className="md:hidden font-medium">{event.title.substring(0, 3)}...</span>
+                          <div className="text-sm">{formatTime(event.startTime)}</div>
+                        </div>
+                        <div className="flex-1 flex items-center justify-center">
+                          <ArrowUpDown className="h-6 w-6 text-black" />
+                        </div>
+                        <div className="text-black text-sm">
+                          {formatTime(event.endTime)}
                         </div>
                       </div>
                     </div>
