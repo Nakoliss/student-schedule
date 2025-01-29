@@ -2,6 +2,7 @@ import React from 'react';
 import { timeSlots, days } from './constants';
 import { Event } from './types';
 import { cn } from '@/lib/utils';
+import { ArrowDown } from 'lucide-react';
 
 interface CalendarGridProps {
   events: Event[];
@@ -27,6 +28,12 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     return currentIndex >= startIndex && currentIndex < endIndex;
   };
 
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours);
+    return `${hour}:${minutes}`;
+  };
+
   return (
     <div className="calendar-grid">
       {timeSlots.map((time) => (
@@ -49,7 +56,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                   if (!isEventStartingAt(event, time)) return null;
                   
                   const duration = getEventDuration(event);
-                  const heightInPixels = duration * 60; // Each time slot is 60px high
+                  const heightInPixels = duration * 60;
                   
                   return (
                     <div
@@ -60,12 +67,15 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                       )}
                       style={{
                         height: `${heightInPixels}px`,
-                        top: '1px',
+                        top: '0px',
                         zIndex: 10
                       }}
                     >
-                      <span className="hidden md:inline">{event.title}</span>
-                      <span className="md:hidden">{event.title.substring(0, 3)}...</span>
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-medium">{formatTime(event.startTime)}</span>
+                        <ArrowDown className="h-4 w-4 my-1" />
+                        <span className="text-sm font-medium">{formatTime(event.endTime)}</span>
+                      </div>
                     </div>
                   );
                 })}
