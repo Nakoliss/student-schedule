@@ -44,9 +44,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
             {time}
           </div>
           {days.map((_, dayIndex) => {
-            const dayEvents = events.filter(
-              event => shouldShowEvent(event, time, dayIndex)
-            );
+            const dayEvents = events.filter(event => shouldShowEvent(event, time, dayIndex));
             
             return (
               <div 
