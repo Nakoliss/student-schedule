@@ -71,10 +71,14 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                         zIndex: 10
                       }}
                     >
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm font-medium">{formatTime(event.startTime)}</span>
-                        <ArrowDown className="h-4 w-4 my-1" />
-                        <span className="text-sm font-medium">{formatTime(event.endTime)}</span>
+                      <div className="flex flex-col h-full justify-between p-1">
+                        <span className="hidden md:inline">{event.title}</span>
+                        <span className="md:hidden">{event.title.substring(0, 3)}...</span>
+                        <div className="flex flex-col items-center text-black">
+                          <span className="text-sm font-medium">{formatTime(event.startTime)}</span>
+                          <ArrowDown className="h-4 w-4 my-1" />
+                          <span className="text-sm font-medium">{formatTime(event.endTime)}</span>
+                        </div>
                       </div>
                     </div>
                   );
