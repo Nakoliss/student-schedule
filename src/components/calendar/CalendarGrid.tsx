@@ -16,7 +16,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
   const getEventTopPosition = (startTime: string) => {
     const [hours, minutes] = startTime.split(':').map(Number);
     const pixelsPerHour = 60; // Each hour slot is 60px tall
-    const position = (hours * pixelsPerHour) + minutes;
+    const position = (hours * pixelsPerHour) + (minutes * pixelsPerHour / 60);
     
     console.log(`Calculating position for ${startTime}:`, {
       hours,
@@ -34,15 +34,19 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     
     const startInMinutes = startHours * 60 + startMinutes;
     const endInMinutes = endHours * 60 + endMinutes;
-    const duration = endInMinutes - startInMinutes;
+    const durationInMinutes = endInMinutes - startInMinutes;
+    
+    // Convert duration to pixels (1 hour = 60px)
+    const heightInPixels = (durationInMinutes / 60) * 60;
     
     console.log(`Calculating duration from ${startTime} to ${endTime}:`, {
       startInMinutes,
       endInMinutes,
-      duration
+      durationInMinutes,
+      heightInPixels
     });
     
-    return duration;
+    return heightInPixels;
   };
 
   return (
