@@ -24,19 +24,20 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
 
   const convertTimeToMinutes = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
+    return (hours * 60) + minutes;
   };
 
   const shouldShowEvent = (event: Event, time: string, dayIndex: number) => {
     if (event.day !== dayIndex) return false;
     
-    const currentTimeMinutes = convertTimeToMinutes(time);
-    const startTimeMinutes = convertTimeToMinutes(event.startTime);
-    const endTimeMinutes = convertTimeToMinutes(event.endTime);
+    const currentTime = convertTimeToMinutes(time);
+    const startTime = convertTimeToMinutes(event.startTime);
+    const endTime = convertTimeToMinutes(event.endTime);
     
-    console.log(`Checking event ${event.title} at time ${time} - current: ${currentTimeMinutes}, start: ${startTimeMinutes}, end: ${endTimeMinutes}`);
+    console.log(`Checking event ${event.title} at time ${time} - current: ${currentTime}, start: ${startTime}, end: ${endTime}`);
     
-    return currentTimeMinutes >= startTimeMinutes && currentTimeMinutes < endTimeMinutes;
+    // Check if the current time slot falls within the event's time range
+    return currentTime >= startTime && currentTime <= endTime;
   };
 
   const formatTime = (time: string) => {
