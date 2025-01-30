@@ -23,11 +23,12 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     return event.startTime === time && event.day === dayIndex;
   };
 
-  const convertTimeToPixels = (time: string) => {
+  const getEventTopPosition = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
-    const timeInMinutes = hours * 60 + minutes;
-    const startOfDay = 8 * 60; // 8:00 is the start of our day
-    return ((timeInMinutes - startOfDay) / 30) * 60; // Each 30-min slot is 60px high
+    const startHour = 8; // Calendar starts at 8:00
+    const hourDiff = hours - startHour;
+    const minuteOffset = minutes / 60;
+    return (hourDiff + minuteOffset) * 60; // Each hour is 60px high
   };
 
   return (
@@ -50,7 +51,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                   
                   const duration = getEventDuration(event);
                   const heightInPixels = duration * 60;
-                  const topPosition = convertTimeToPixels(event.startTime);
+                  const topPosition = getEventTopPosition(event.startTime);
                   
                   console.log(`Positioning event ${event.title}:`, {
                     startTime: event.startTime,
