@@ -23,13 +23,11 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     return event.startTime === time && event.day === dayIndex;
   };
 
-  const getEventTopPosition = (time: string) => {
-    const startIndex = timeSlots.indexOf(time);
-    if (startIndex === -1) {
-      console.error(`Invalid time slot: ${time}`);
-      return 0;
-    }
-    return startIndex * 60; // Each time slot is 60px high
+  const convertTimeToPixels = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const timeInMinutes = hours * 60 + minutes;
+    const startOfDay = 8 * 60; // 8:00 is the start of our day
+    return ((timeInMinutes - startOfDay) / 30) * 60; // Each 30-min slot is 60px high
   };
 
   return (
@@ -52,12 +50,13 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                   
                   const duration = getEventDuration(event);
                   const heightInPixels = duration * 60;
-                  const topPosition = getEventTopPosition(event.startTime);
+                  const topPosition = convertTimeToPixels(event.startTime);
                   
                   console.log(`Positioning event ${event.title}:`, {
                     startTime: event.startTime,
                     topPosition,
-                    heightInPixels
+                    heightInPixels,
+                    duration
                   });
                   
                   return (
@@ -67,8 +66,11 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                       heightInPixels={heightInPixels}
                       getEventStyle={getEventStyle}
                       style={{ 
+                        position: 'absolute',
                         top: `${topPosition}px`,
-                        position: 'absolute'
+                        left: '4px',
+                        right: '4px',
+                        zIndex: 20
                       }}
                     />
                   );
