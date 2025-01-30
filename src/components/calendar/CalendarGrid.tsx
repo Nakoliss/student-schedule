@@ -16,16 +16,17 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
   const getEventTopPosition = (startTime: string) => {
     const [hours, minutes] = startTime.split(':').map(Number);
     
-    // Calculate position in minutes since midnight
-    const totalMinutesFromStart = hours * 60 + minutes;
+    // Each hour is 60px tall (as defined in calendar-cell height)
+    const hourOffset = hours * 60; // Convert hours to pixels
+    const minuteOffset = minutes; // Convert minutes to pixels
     
-    // Convert to pixels (1 minute = 1px)
-    const position = totalMinutesFromStart;
+    const position = hourOffset + minuteOffset;
     
     console.log(`Calculating position for ${startTime}:`, {
       hours,
       minutes,
-      totalMinutesFromStart,
+      hourOffset,
+      minuteOffset,
       position
     });
     
@@ -36,24 +37,20 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const [startHours, startMinutes] = startTime.split(':').map(Number);
     const [endHours, endMinutes] = endTime.split(':').map(Number);
     
-    // Calculate total minutes for both times
-    const startTotalMinutes = startHours * 60 + startMinutes;
-    const endTotalMinutes = endHours * 60 + endMinutes;
+    // Convert everything to minutes first
+    const startInMinutes = (startHours * 60) + startMinutes;
+    const endInMinutes = (endHours * 60) + endMinutes;
     
-    // Calculate duration in minutes
-    const durationInMinutes = endTotalMinutes - startTotalMinutes;
-    
-    // Convert to pixels (1 minute = 1px)
-    const heightInPixels = durationInMinutes;
+    // Calculate duration in minutes, which will be our pixels
+    const duration = endInMinutes - startInMinutes;
     
     console.log(`Calculating duration from ${startTime} to ${endTime}:`, {
-      startTotalMinutes,
-      endTotalMinutes,
-      durationInMinutes,
-      heightInPixels
+      startInMinutes,
+      endInMinutes,
+      duration
     });
     
-    return heightInPixels;
+    return duration;
   };
 
   return (
