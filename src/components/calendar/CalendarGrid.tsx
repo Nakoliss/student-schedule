@@ -16,18 +16,14 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
   const getEventTopPosition = (startTime: string) => {
     const [hours, minutes] = startTime.split(':').map(Number);
     
-    // Each hour is 60px tall (as defined in calendar-cell height)
-    const hourOffset = hours * 60; // Convert hours to pixels
-    const minuteOffset = minutes; // Convert minutes to pixels
-    
-    const position = hourOffset + minuteOffset;
+    // Convert time to pixels where each hour slot is 60px tall
+    const position = (hours * 60 + minutes) * (60 / 60); // Scale factor of 1 since 1 minute = 1px
     
     console.log(`Calculating position for ${startTime}:`, {
       hours,
       minutes,
-      hourOffset,
-      minuteOffset,
-      position
+      position,
+      pixelsPerHour: 60
     });
     
     return position;
@@ -37,17 +33,18 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const [startHours, startMinutes] = startTime.split(':').map(Number);
     const [endHours, endMinutes] = endTime.split(':').map(Number);
     
-    // Convert everything to minutes first
-    const startInMinutes = (startHours * 60) + startMinutes;
-    const endInMinutes = (endHours * 60) + endMinutes;
+    // Calculate total minutes between start and end
+    const startInMinutes = startHours * 60 + startMinutes;
+    const endInMinutes = endHours * 60 + endMinutes;
     
-    // Calculate duration in minutes, which will be our pixels
-    const duration = endInMinutes - startInMinutes;
+    // Convert minutes to pixels where each hour slot is 60px tall
+    const duration = (endInMinutes - startInMinutes) * (60 / 60); // Scale factor of 1 since 1 minute = 1px
     
     console.log(`Calculating duration from ${startTime} to ${endTime}:`, {
       startInMinutes,
       endInMinutes,
-      duration
+      duration,
+      pixelsPerHour: 60
     });
     
     return duration;
@@ -73,7 +70,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       {events.map(event => {
         const topPosition = getEventTopPosition(event.startTime);
         const heightInPixels = getEventDuration(event.startTime, event.endTime);
-        // Calculate position based on 6 columns (time column + 5 days)
         const leftPosition = `calc(${(event.day + 1) * (100 / 6)}% + 4px)`;
         const width = `calc(${100 / 6}% - 8px)`;
         
