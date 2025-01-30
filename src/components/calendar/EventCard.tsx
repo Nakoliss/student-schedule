@@ -18,7 +18,7 @@ export const EventCard = ({ event, heightInPixels, getEventStyle, style }: Event
   return (
     <div
       className={cn(
-        "event-card absolute inset-x-0 mx-1 rounded-md overflow-hidden shadow-sm",
+        "event-card absolute inset-x-0 rounded-md overflow-hidden shadow-sm",
         getEventStyle(event.type)
       )}
       style={{
