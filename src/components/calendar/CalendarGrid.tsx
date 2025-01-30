@@ -36,7 +36,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     
     console.log(`Checking event ${event.title} at time ${time} - current: ${currentTime}, start: ${startTime}, end: ${endTime}`);
     
-    // Check if the current time slot falls within the event's time range
     return currentTime >= startTime && currentTime <= endTime;
   };
 
