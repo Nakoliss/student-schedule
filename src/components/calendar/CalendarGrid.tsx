@@ -1,7 +1,8 @@
 import React from 'react';
 import { timeSlots, days } from './constants';
 import { Event } from './types';
-import { cn } from '@/lib/utils';
+import { EventCard } from './EventCard';
+import { TimeCell } from './TimeCell';
 
 interface CalendarGridProps {
   events: Event[];
@@ -10,7 +11,7 @@ interface CalendarGridProps {
 }
 
 export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGridProps) => {
-  console.log('Events received in CalendarGrid:', events);
+  console.log('Events in CalendarGrid:', events);
 
   const getEventDuration = (event: Event) => {
     const startIndex = timeSlots.indexOf(event.startTime);
@@ -34,28 +35,17 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const startTime = convertTimeToMinutes(event.startTime);
     const endTime = convertTimeToMinutes(event.endTime);
     
-    if (endTime < startTime) {
-      return currentTime >= startTime || currentTime < endTime;
-    }
-    
     return currentTime >= startTime && currentTime < endTime;
-  };
-
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours);
-    return `${hour}:${minutes}`;
   };
 
   return (
     <div className="calendar-grid">
       {timeSlots.map((time) => (
         <React.Fragment key={time}>
-          <div className="calendar-cell time-cell">
-            {formatTime(time)}
-          </div>
+          <TimeCell time={time} />
           {days.map((_, dayIndex) => {
-            const dayEvents = events.filter(event => shouldShowEvent(event, time, dayIndex));
+            const dayEvents = events.filter(event => event.day === dayIndex);
+            console.log(`Events for day ${dayIndex}:`, dayEvents);
             
             return (
               <div 
@@ -70,29 +60,12 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                   const heightInPixels = duration * 60;
                   
                   return (
-                    <div
+                    <EventCard
                       key={event.id}
-                      className={cn(
-                        "event-card absolute inset-x-0 mx-1 rounded-md overflow-hidden shadow-sm",
-                        getEventStyle(event.type)
-                      )}
-                      style={{
-                        height: `${heightInPixels}px`,
-                        top: '0px',
-                        zIndex: 10
-                      }}
-                    >
-                      <div className="flex flex-col h-full justify-between p-1">
-                        <div className="text-black">
-                          <span className="hidden md:inline font-medium">{event.title}</span>
-                          <span className="md:hidden font-medium">{event.title.substring(0, 3)}...</span>
-                          <div className="text-sm text-center">{formatTime(event.startTime)}</div>
-                        </div>
-                        <div className="text-black text-sm text-center">
-                          {formatTime(event.endTime)}
-                        </div>
-                      </div>
-                    </div>
+                      event={event}
+                      heightInPixels={heightInPixels}
+                      getEventStyle={getEventStyle}
+                    />
                   );
                 })}
               </div>

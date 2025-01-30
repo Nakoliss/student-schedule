@@ -3,11 +3,36 @@ import type { Event } from '@/components/calendar/types';
 // You can replace these with actual API calls when you have a backend
 const STORAGE_KEY = 'student_schedule_events';
 
+// Add some test events
+const TEST_EVENTS: Event[] = [
+  {
+    id: '1',
+    title: 'Mathematics',
+    day: 0, // Monday
+    startTime: '09:00',
+    endTime: '10:30',
+    type: 'class'
+  },
+  {
+    id: '2',
+    title: 'Physics',
+    day: 2, // Wednesday
+    startTime: '14:00',
+    endTime: '15:30',
+    type: 'class'
+  }
+];
+
 export const eventApi = {
   getEvents: async (): Promise<Event[]> => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
+      if (!stored) {
+        // Initialize with test events if storage is empty
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(TEST_EVENTS));
+        return TEST_EVENTS;
+      }
+      return JSON.parse(stored);
     } catch (error) {
       console.error('Error fetching events:', error);
       throw new Error('Failed to fetch events');
