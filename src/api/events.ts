@@ -1,36 +1,17 @@
 import type { Event } from '@/components/calendar/types';
 
-// You can replace these with actual API calls when you have a backend
 const STORAGE_KEY = 'student_schedule_events';
 
-// Add some test events
-const TEST_EVENTS: Event[] = [
-  {
-    id: '1',
-    title: 'Mathematics',
-    day: 0, // Monday
-    startTime: '09:00',
-    endTime: '10:30',
-    type: 'class'
-  },
-  {
-    id: '2',
-    title: 'Physics',
-    day: 2, // Wednesday
-    startTime: '14:00',
-    endTime: '15:30',
-    type: 'class'
-  }
-];
+// Empty initial state - no test events
+const INITIAL_EVENTS: Event[] = [];
 
 export const eventApi = {
   getEvents: async (): Promise<Event[]> => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (!stored) {
-        // Initialize with test events if storage is empty
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(TEST_EVENTS));
-        return TEST_EVENTS;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_EVENTS));
+        return INITIAL_EVENTS;
       }
       return JSON.parse(stored);
     } catch (error) {
@@ -39,11 +20,22 @@ export const eventApi = {
     }
   },
 
+  clearAllEvents: async (): Promise<void> => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_EVENTS));
+      console.log('All events cleared successfully');
+    } catch (error) {
+      console.error('Error clearing events:', error);
+      throw new Error('Failed to clear events');
+    }
+  },
+
   createEvent: async (event: Event): Promise<Event> => {
     try {
       const events = await eventApi.getEvents();
       const newEvents = [...events, event];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newEvents));
+      console.log('Event created:', event);
       return event;
     } catch (error) {
       console.error('Error creating event:', error);
