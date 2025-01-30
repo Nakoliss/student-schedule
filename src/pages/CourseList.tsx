@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useEvents } from "@/hooks/use-events";
 import { AddCourseDialog } from "@/components/calendar/AddCourseDialog";
 import { useState } from "react";
@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const CourseList = () => {
   const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
-  const { events, createEvent } = useEvents();
+  const { events, createEvent, clearAllEvents } = useEvents();
   const { toast } = useToast();
 
   const handleAddCourse = () => {
@@ -17,14 +17,36 @@ const CourseList = () => {
     setIsAddCourseOpen(true);
   };
 
+  const handleClearAllCourses = async () => {
+    try {
+      await clearAllEvents();
+      toast({
+        title: "Cours supprimés",
+        description: "Tous les cours ont été supprimés avec succès"
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer les cours",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto p-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Liste de cours</h1>
-        <Button onClick={handleAddCourse}>
-          <Plus className="h-4 w-4 mr-2" />
-          Ajouter un cours
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="destructive" onClick={handleClearAllCourses}>
+            <Trash2 className="h-4 w-4 mr-2" />
+            Supprimer tout
+          </Button>
+          <Button onClick={handleAddCourse}>
+            <Plus className="h-4 w-4 mr-2" />
+            Ajouter un cours
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4">

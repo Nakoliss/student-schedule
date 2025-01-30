@@ -11,6 +11,14 @@ export const useEvents = () => {
     queryFn: eventApi.getEvents,
   });
 
+  const clearEventsMutation = useMutation({
+    mutationFn: eventApi.clearAllEvents,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+      console.log('Events cleared successfully');
+    },
+  });
+
   const createEventMutation = useMutation({
     mutationFn: eventApi.createEvent,
     onSuccess: () => {
@@ -36,11 +44,13 @@ export const useEvents = () => {
     events,
     isLoading,
     error,
+    clearAllEvents: clearEventsMutation.mutate,
     createEvent: createEventMutation.mutate,
     updateEvent: updateEventMutation.mutate,
     deleteEvent: deleteEventMutation.mutate,
     isCreating: createEventMutation.isPending,
     isUpdating: updateEventMutation.isPending,
     isDeleting: deleteEventMutation.isPending,
+    isClearing: clearEventsMutation.isPending,
   };
 };
