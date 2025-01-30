@@ -5,23 +5,33 @@ const STORAGE_KEY = 'student_schedule_events';
 // Empty initial state - no test events
 const INITIAL_EVENTS: Event[] = [];
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const eventApi = {
   getEvents: async (): Promise<Event[]> => {
     try {
+      await delay(100); // Small delay to ensure storage is ready
       const stored = localStorage.getItem(STORAGE_KEY);
+      console.log('Retrieved events from storage:', stored);
+      
       if (!stored) {
+        console.log('No events found, initializing with empty array');
         localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_EVENTS));
         return INITIAL_EVENTS;
       }
-      return JSON.parse(stored);
+      
+      const events = JSON.parse(stored);
+      console.log('Parsed events:', events);
+      return events;
     } catch (error) {
       console.error('Error fetching events:', error);
-      throw new Error('Failed to fetch events');
+      return INITIAL_EVENTS; // Return empty array instead of throwing
     }
   },
 
   clearAllEvents: async (): Promise<void> => {
     try {
+      await delay(100);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_EVENTS));
       console.log('All events cleared successfully');
     } catch (error) {
@@ -32,10 +42,11 @@ export const eventApi = {
 
   createEvent: async (event: Event): Promise<Event> => {
     try {
+      await delay(100);
       const events = await eventApi.getEvents();
       const newEvents = [...events, event];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newEvents));
-      console.log('Event created:', event);
+      console.log('Event created successfully:', event);
       return event;
     } catch (error) {
       console.error('Error creating event:', error);
@@ -45,9 +56,11 @@ export const eventApi = {
 
   updateEvent: async (event: Event): Promise<Event> => {
     try {
+      await delay(100);
       const events = await eventApi.getEvents();
       const updatedEvents = events.map(e => e.id === event.id ? event : e);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEvents));
+      console.log('Event updated successfully:', event);
       return event;
     } catch (error) {
       console.error('Error updating event:', error);
@@ -57,9 +70,11 @@ export const eventApi = {
 
   deleteEvent: async (eventId: string): Promise<void> => {
     try {
+      await delay(100);
       const events = await eventApi.getEvents();
       const filteredEvents = events.filter(e => e.id !== eventId);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredEvents));
+      console.log('Event deleted successfully:', eventId);
     } catch (error) {
       console.error('Error deleting event:', error);
       throw new Error('Failed to delete event');
