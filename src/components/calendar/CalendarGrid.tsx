@@ -10,7 +10,7 @@ interface CalendarGridProps {
 }
 
 export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGridProps) => {
-  console.log('Events received in CalendarGrid:', events); // Debug log
+  console.log('Events received in CalendarGrid:', events);
 
   const getEventDuration = (event: Event) => {
     const startIndex = timeSlots.indexOf(event.startTime);
@@ -22,16 +22,21 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     return event.startTime === time && event.day === dayIndex;
   };
 
+  const convertTimeToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
   const shouldShowEvent = (event: Event, time: string, dayIndex: number) => {
     if (event.day !== dayIndex) return false;
     
-    const timeIndex = timeSlots.indexOf(time);
-    const startIndex = timeSlots.indexOf(event.startTime);
-    const endIndex = timeSlots.indexOf(event.endTime);
+    const currentTimeMinutes = convertTimeToMinutes(time);
+    const startTimeMinutes = convertTimeToMinutes(event.startTime);
+    const endTimeMinutes = convertTimeToMinutes(event.endTime);
     
-    console.log(`Checking event ${event.title} at time ${time} (index ${timeIndex}) - start: ${startIndex}, end: ${endIndex}`);
+    console.log(`Checking event ${event.title} at time ${time} - current: ${currentTimeMinutes}, start: ${startTimeMinutes}, end: ${endTimeMinutes}`);
     
-    return timeIndex >= startIndex && timeIndex < endIndex;
+    return currentTimeMinutes >= startTimeMinutes && currentTimeMinutes < endTimeMinutes;
   };
 
   const formatTime = (time: string) => {
