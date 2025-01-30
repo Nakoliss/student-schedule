@@ -12,42 +12,40 @@ interface CalendarGridProps {
 
 export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGridProps) => {
   console.log('Events received in CalendarGrid:', events);
-  console.log('Time slots:', timeSlots);
-  console.log('Days:', days);
 
-  const getEventDuration = (event: Event) => {
-    const startIndex = timeSlots.indexOf(event.startTime);
-    const endIndex = timeSlots.indexOf(event.endTime);
-    console.log(`Duration calculation for ${event.title}:`, {
-      startTime: event.startTime,
-      endTime: event.endTime,
-      startIndex,
-      endIndex,
-      duration: endIndex - startIndex
-    });
-    return endIndex - startIndex;
-  };
-
-  const isEventStartingAt = (event: Event, time: string, dayIndex: number) => {
-    const isStarting = event.startTime === time && event.day === dayIndex;
-    console.log(`Checking if event ${event.title} starts at ${time} on day ${dayIndex}:`, isStarting);
-    return isStarting;
-  };
-
-  const getEventTopPosition = (time: string) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    const startHour = 8; // Calendar starts at 8:00
-    const hourDiff = hours - startHour;
-    const minuteOffset = minutes / 60;
-    const position = (hourDiff + minuteOffset) * 60; // Each hour is 60px high
-    console.log(`Calculating position for time ${time}:`, {
+  const getEventTopPosition = (startTime: string) => {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const calendarStartHour = 8; // Calendar starts at 8:00
+    
+    // Calculate offset from start of calendar in minutes
+    const totalMinutesFromStart = (hours - calendarStartHour) * 60 + minutes;
+    
+    // Convert to pixels (1 hour = 60px)
+    const position = (totalMinutesFromStart / 60) * 60;
+    
+    console.log(`Calculating position for ${startTime}:`, {
       hours,
       minutes,
-      hourDiff,
-      minuteOffset,
+      totalMinutesFromStart,
       position
     });
+    
     return position;
+  };
+
+  const getEventDuration = (startTime: string, endTime: string) => {
+    const [startHours, startMinutes] = startTime.split(':').map(Number);
+    const [endHours, endMinutes] = endTime.split(':').map(Number);
+    
+    const durationInMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
+    const heightInPixels = (durationInMinutes / 60) * 60;
+    
+    console.log(`Calculating duration from ${startTime} to ${endTime}:`, {
+      durationInMinutes,
+      heightInPixels
+    });
+    
+    return heightInPixels;
   };
 
   return (
@@ -66,24 +64,14 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                 onClick={() => onDayClick(dayIndex, days[dayIndex])}
               >
                 {dayEvents.map(event => {
-                  if (!isEventStartingAt(event, time, dayIndex)) return null;
-                  
-                  const duration = getEventDuration(event);
-                  const heightInPixels = duration * 60;
                   const topPosition = getEventTopPosition(event.startTime);
+                  const heightInPixels = getEventDuration(event.startTime, event.endTime);
                   
                   console.log(`Positioning event ${event.title}:`, {
                     startTime: event.startTime,
+                    endTime: event.endTime,
                     topPosition,
-                    heightInPixels,
-                    duration,
-                    style: {
-                      position: 'absolute',
-                      top: `${topPosition}px`,
-                      left: '4px',
-                      right: '4px',
-                      zIndex: 20
-                    }
+                    heightInPixels
                   });
                   
                   return (
