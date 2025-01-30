@@ -49,7 +49,8 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
   };
 
   return (
-    <div className="calendar-grid">
+    <div className="calendar-grid relative">
+      {/* Render the base grid */}
       {timeSlots.map((time) => (
         <React.Fragment key={time}>
           <TimeCell time={time} />
@@ -63,42 +64,37 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
         </React.Fragment>
       ))}
 
-      {/* Render events separately from the grid */}
-      {days.map((_, dayIndex) => {
-        const dayEvents = events.filter(event => event.day === dayIndex);
-        console.log(`Rendering events for day ${dayIndex}:`, dayEvents);
+      {/* Render events layer */}
+      {events.map(event => {
+        const topPosition = getEventTopPosition(event.startTime);
+        const heightInPixels = getEventDuration(event.startTime, event.endTime);
+        const leftPosition = `calc(${(event.day + 1) * (100 / 6)}% + 4px)`;
+        const width = `calc(${100 / 6}% - 8px)`;
+        
+        console.log(`Positioning event ${event.title}:`, {
+          day: event.day,
+          startTime: event.startTime,
+          endTime: event.endTime,
+          topPosition,
+          heightInPixels,
+          leftPosition,
+          width
+        });
         
         return (
-          <div key={`events-day-${dayIndex}`} className="absolute" style={{ left: `calc(${(dayIndex + 1) * (100 / (days.length + 1))}%)` }}>
-            {dayEvents.map(event => {
-              const topPosition = getEventTopPosition(event.startTime);
-              const heightInPixels = getEventDuration(event.startTime, event.endTime);
-              
-              console.log(`Positioning event ${event.title}:`, {
-                startTime: event.startTime,
-                endTime: event.endTime,
-                topPosition,
-                heightInPixels
-              });
-              
-              return (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  heightInPixels={heightInPixels}
-                  getEventStyle={getEventStyle}
-                  style={{ 
-                    position: 'absolute',
-                    top: `${topPosition}px`,
-                    left: '4px',
-                    right: '4px',
-                    width: `calc(${100 / (days.length + 1)}% - 8px)`,
-                    zIndex: 20
-                  }}
-                />
-              );
-            })}
-          </div>
+          <EventCard
+            key={event.id}
+            event={event}
+            heightInPixels={heightInPixels}
+            getEventStyle={getEventStyle}
+            style={{ 
+              position: 'absolute',
+              top: `${topPosition}px`,
+              left: leftPosition,
+              width: width,
+              zIndex: 20
+            }}
+          />
         );
       })}
     </div>
