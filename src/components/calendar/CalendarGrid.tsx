@@ -15,14 +15,16 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
 
   const getEventTopPosition = (startTime: string) => {
     const [hours, minutes] = startTime.split(':').map(Number);
+    const pixelsPerHour = 60; // Each hour slot is 60px tall
     const totalMinutes = hours * 60 + minutes;
-    const position = totalMinutes;
+    const position = (totalMinutes / 60) * pixelsPerHour;
     
     console.log(`Calculating position for ${startTime}:`, {
       hours,
       minutes,
       totalMinutes,
-      position
+      position,
+      pixelsPerHour
     });
     
     return position;
@@ -36,13 +38,17 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const endInMinutes = endHours * 60 + endMinutes;
     const durationInMinutes = endInMinutes - startInMinutes;
     
+    // Convert duration to pixels (1 hour = 60px)
+    const heightInPixels = (durationInMinutes / 60) * 60;
+    
     console.log(`Calculating duration from ${startTime} to ${endTime}:`, {
       startInMinutes,
       endInMinutes,
-      durationInMinutes
+      durationInMinutes,
+      heightInPixels
     });
     
-    return durationInMinutes;
+    return heightInPixels;
   };
 
   return (
@@ -63,9 +69,9 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       {events.map(event => {
         const topPosition = getEventTopPosition(event.startTime);
         const heightInPixels = getEventDuration(event.startTime, event.endTime);
-        const columnStart = event.day + 2; // Add 2 because first column is time labels (1-based)
-        const leftPosition = `calc(${(columnStart) * (100 / 6)}% - 100%/6)`;
-        const width = `calc(100%/6 - 8px)`;
+        const dayWidth = 100 / 7; // 7 columns total (time + 6 days)
+        const leftPosition = `calc(${(event.day + 1) * dayWidth}% + 4px)`; // +1 to skip time column
+        const width = `calc(${dayWidth}% - 8px)`; // Subtract padding
         
         console.log(`Positioning event ${event.title}:`, {
           day: event.day,
@@ -73,7 +79,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
           endTime: event.endTime,
           topPosition,
           heightInPixels,
-          columnStart,
           leftPosition,
           width
         });
