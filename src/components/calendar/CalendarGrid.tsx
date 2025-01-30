@@ -27,7 +27,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       pixelsPerHour
     });
     
-    return position;
+    return `${position}px`;
   };
 
   const getEventDuration = (startTime: string, endTime: string) => {
@@ -48,7 +48,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       heightInPixels
     });
     
-    return heightInPixels;
+    return `${heightInPixels}px`;
   };
 
   return (
@@ -91,10 +91,10 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
             getEventStyle={getEventStyle}
             style={{ 
               position: 'absolute',
-              top: `${top}px`,
+              top,
               left,
               width,
-              height: `${height}px`,
+              height,
               zIndex: 20
             }}
           />

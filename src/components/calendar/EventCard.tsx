@@ -3,7 +3,6 @@ import { Event } from "./types";
 
 interface EventCardProps {
   event: Event;
-  heightInPixels: number;
   getEventStyle: (type: Event['type']) => string;
   style?: React.CSSProperties;
 }
