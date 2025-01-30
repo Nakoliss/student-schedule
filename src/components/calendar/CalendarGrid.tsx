@@ -69,9 +69,8 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       {events.map(event => {
         const topPosition = getEventTopPosition(event.startTime);
         const heightInPixels = getEventDuration(event.startTime, event.endTime);
-        const dayWidth = 100 / 7; // 7 columns total (time + 6 days)
-        const leftPosition = `calc(${(event.day + 1) * dayWidth}% + 4px)`; // +1 to skip time column
-        const width = `calc(${dayWidth}% - 8px)`; // Subtract padding
+        const columnWidth = `calc(100% / 7)`; // 7 columns (time + 6 days)
+        const leftPosition = `calc(${(event.day + 1) * (100/7)}%)`; // +1 to skip time column
         
         console.log(`Positioning event ${event.title}:`, {
           day: event.day,
@@ -80,7 +79,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
           topPosition,
           heightInPixels,
           leftPosition,
-          width
+          columnWidth
         });
         
         return (
@@ -93,7 +92,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
               position: 'absolute',
               top: `${topPosition}px`,
               left: leftPosition,
-              width: width,
+              width: columnWidth,
               zIndex: 20
             }}
           />
