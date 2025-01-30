@@ -15,7 +15,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
 
   const getEventTopPosition = (startTime: string) => {
     const [hours, minutes] = startTime.split(':').map(Number);
-    const calendarStartHour = 8; // Calendar starts at 8:00
+    const calendarStartHour = 0; // Calendar starts at 00:00
     
     // Calculate offset from start of calendar in minutes
     const totalMinutesFromStart = (hours - calendarStartHour) * 60 + minutes;
@@ -37,10 +37,19 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const [startHours, startMinutes] = startTime.split(':').map(Number);
     const [endHours, endMinutes] = endTime.split(':').map(Number);
     
-    const durationInMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
+    // Calculate total minutes for both start and end times
+    const startTotalMinutes = startHours * 60 + startMinutes;
+    const endTotalMinutes = endHours * 60 + endMinutes;
+    
+    // Calculate the difference in minutes
+    const durationInMinutes = endTotalMinutes - startTotalMinutes;
+    
+    // Convert to pixels (1 hour = 60px, so 1 minute = 1px)
     const heightInPixels = (durationInMinutes / 60) * 60;
     
     console.log(`Calculating duration from ${startTime} to ${endTime}:`, {
+      startTotalMinutes,
+      endTotalMinutes,
       durationInMinutes,
       heightInPixels
     });
@@ -68,8 +77,8 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       {events.map(event => {
         const topPosition = getEventTopPosition(event.startTime);
         const heightInPixels = getEventDuration(event.startTime, event.endTime);
-        const leftPosition = `calc(${(event.day + 1) * (100 / 6)}% + 4px)`;
-        const width = `calc(${100 / 6}% - 8px)`;
+        const leftPosition = `calc(${(event.day + 1) * (100 / 8)}% + 4px)`;
+        const width = `calc(${100 / 8}% - 8px)`;
         
         console.log(`Positioning event ${event.title}:`, {
           day: event.day,
