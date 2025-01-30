@@ -67,32 +67,33 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       ))}
 
       {events.map(event => {
-        const topPosition = getEventTopPosition(event.startTime);
-        const heightInPixels = getEventDuration(event.startTime, event.endTime);
-        const dayWidth = 100 / 8; // Width for each day column (8 columns including time)
-        const leftOffset = (event.day + 1) * dayWidth; // +1 to account for time column
+        const top = getEventTopPosition(event.startTime);
+        const height = getEventDuration(event.startTime, event.endTime);
+        const left = `${((event.day + 1) * 100) / 8}%`; // +1 to account for time column
+        const width = `${100 / 8}%`; // 8 columns (7 days + time column)
         
         console.log(`Positioning event ${event.title}:`, {
+          top,
+          height,
+          left,
+          width,
           day: event.day,
           startTime: event.startTime,
-          endTime: event.endTime,
-          topPosition,
-          heightInPixels,
-          leftOffset,
-          dayWidth
+          endTime: event.endTime
         });
         
         return (
           <EventCard
             key={event.id}
             event={event}
-            heightInPixels={heightInPixels}
+            heightInPixels={height}
             getEventStyle={getEventStyle}
             style={{ 
               position: 'absolute',
-              top: `${topPosition}px`,
-              left: `${leftOffset}%`,
-              width: `${dayWidth}%`,
+              top: `${top}px`,
+              left,
+              width,
+              height: `${height}px`,
               zIndex: 20
             }}
           />

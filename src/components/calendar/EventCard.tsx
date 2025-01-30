@@ -8,7 +8,7 @@ interface EventCardProps {
   style?: React.CSSProperties;
 }
 
-export const EventCard = ({ event, heightInPixels, getEventStyle, style }: EventCardProps) => {
+export const EventCard = ({ event, getEventStyle, style }: EventCardProps) => {
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
@@ -21,10 +21,7 @@ export const EventCard = ({ event, heightInPixels, getEventStyle, style }: Event
         "event-card rounded-md overflow-hidden shadow-sm w-full",
         getEventStyle(event.type)
       )}
-      style={{
-        height: `${heightInPixels}px`,
-        ...style
-      }}
+      style={style}
     >
       <div className="flex flex-col h-full justify-between p-1">
         <div className="text-black">
