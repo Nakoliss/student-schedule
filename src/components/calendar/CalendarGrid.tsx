@@ -15,12 +15,14 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
 
   const getEventTopPosition = (startTime: string) => {
     const [hours, minutes] = startTime.split(':').map(Number);
-    const position = hours * 60 + minutes;
+    const pixelsPerHour = 60; // Each hour slot is 60px tall
+    const position = (hours * pixelsPerHour) + minutes;
     
     console.log(`Calculating position for ${startTime}:`, {
       hours,
       minutes,
-      position
+      position,
+      pixelsPerHour
     });
     
     return position;
@@ -45,7 +47,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
 
   return (
     <div className="calendar-grid relative">
-      {/* Render the base grid */}
       {timeSlots.map((time) => (
         <React.Fragment key={time}>
           <TimeCell time={time} />
@@ -59,7 +60,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
         </React.Fragment>
       ))}
 
-      {/* Render events layer */}
       {events.map(event => {
         const topPosition = getEventTopPosition(event.startTime);
         const heightInPixels = getEventDuration(event.startTime, event.endTime);
