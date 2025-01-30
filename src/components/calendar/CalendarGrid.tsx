@@ -53,48 +53,54 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       {timeSlots.map((time) => (
         <React.Fragment key={time}>
           <TimeCell time={time} />
-          {days.map((_, dayIndex) => {
-            const dayEvents = events.filter(event => event.day === dayIndex);
-            console.log(`Rendering events for day ${dayIndex}:`, dayEvents);
-            
-            return (
-              <div 
-                key={`${dayIndex}-${time}`} 
-                className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
-                onClick={() => onDayClick(dayIndex, days[dayIndex])}
-              >
-                {dayEvents.map(event => {
-                  const topPosition = getEventTopPosition(event.startTime);
-                  const heightInPixels = getEventDuration(event.startTime, event.endTime);
-                  
-                  console.log(`Positioning event ${event.title}:`, {
-                    startTime: event.startTime,
-                    endTime: event.endTime,
-                    topPosition,
-                    heightInPixels
-                  });
-                  
-                  return (
-                    <EventCard
-                      key={event.id}
-                      event={event}
-                      heightInPixels={heightInPixels}
-                      getEventStyle={getEventStyle}
-                      style={{ 
-                        position: 'absolute',
-                        top: `${topPosition}px`,
-                        left: '4px',
-                        right: '4px',
-                        zIndex: 20
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
+          {days.map((_, dayIndex) => (
+            <div 
+              key={`${dayIndex}-${time}`} 
+              className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
+              onClick={() => onDayClick(dayIndex, days[dayIndex])}
+            />
+          ))}
         </React.Fragment>
       ))}
+
+      {/* Render events separately from the grid */}
+      {days.map((_, dayIndex) => {
+        const dayEvents = events.filter(event => event.day === dayIndex);
+        console.log(`Rendering events for day ${dayIndex}:`, dayEvents);
+        
+        return (
+          <div key={`events-day-${dayIndex}`} className="absolute" style={{ left: `calc(${(dayIndex + 1) * (100 / (days.length + 1))}%)` }}>
+            {dayEvents.map(event => {
+              const topPosition = getEventTopPosition(event.startTime);
+              const heightInPixels = getEventDuration(event.startTime, event.endTime);
+              
+              console.log(`Positioning event ${event.title}:`, {
+                startTime: event.startTime,
+                endTime: event.endTime,
+                topPosition,
+                heightInPixels
+              });
+              
+              return (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  heightInPixels={heightInPixels}
+                  getEventStyle={getEventStyle}
+                  style={{ 
+                    position: 'absolute',
+                    top: `${topPosition}px`,
+                    left: '4px',
+                    right: '4px',
+                    width: `calc(${100 / (days.length + 1)}% - 8px)`,
+                    zIndex: 20
+                  }}
+                />
+              );
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 };
