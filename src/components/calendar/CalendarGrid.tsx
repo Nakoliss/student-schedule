@@ -67,10 +67,12 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       ))}
 
       {events.map(event => {
+        // Calculate exact pixel positions
+        const dayColumnWidth = 100 / 6; // 6 columns (5 days + time column)
+        const left = `${((event.day + 1) * dayColumnWidth)}%`;
+        const width = `${dayColumnWidth}%`;
         const top = getEventTopPosition(event.startTime);
         const height = getEventDuration(event.startTime, event.endTime);
-        const left = `${((event.day + 1) * 100) / 8}%`; // +1 to account for time column
-        const width = `${100 / 8}%`; // 8 columns (7 days + time column)
         
         console.log(`Positioning event ${event.title}:`, {
           top,
@@ -86,7 +88,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
           <EventCard
             key={event.id}
             event={event}
-            heightInPixels={height}
             getEventStyle={getEventStyle}
             style={{ 
               position: 'absolute',
