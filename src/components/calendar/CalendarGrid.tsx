@@ -23,13 +23,12 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     return event.startTime === time && event.day === dayIndex;
   };
 
-  const convertTimeToMinutes = (time: string) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    return (hours * 60) + minutes;
-  };
-
-  const getEventTopPosition = (startTime: string) => {
-    const startIndex = timeSlots.indexOf(startTime);
+  const getEventTopPosition = (time: string) => {
+    const startIndex = timeSlots.indexOf(time);
+    if (startIndex === -1) {
+      console.error(`Invalid time slot: ${time}`);
+      return 0;
+    }
     return startIndex * 60; // Each time slot is 60px high
   };
 
@@ -55,13 +54,22 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                   const heightInPixels = duration * 60;
                   const topPosition = getEventTopPosition(event.startTime);
                   
+                  console.log(`Positioning event ${event.title}:`, {
+                    startTime: event.startTime,
+                    topPosition,
+                    heightInPixels
+                  });
+                  
                   return (
                     <EventCard
                       key={event.id}
                       event={event}
                       heightInPixels={heightInPixels}
                       getEventStyle={getEventStyle}
-                      style={{ top: `${topPosition}px` }}
+                      style={{ 
+                        top: `${topPosition}px`,
+                        position: 'absolute'
+                      }}
                     />
                   );
                 })}
