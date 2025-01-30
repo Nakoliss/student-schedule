@@ -87,12 +87,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                           <span className="md:hidden font-medium">{event.title.substring(0, 3)}...</span>
                           <div className="text-sm text-center">{formatTime(event.startTime)}</div>
                         </div>
-                        <div className="flex-1 flex items-center justify-center">
-                          <div className="h-[80%] w-[1px] bg-black relative">
-                            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 border-t-2 border-r-2 border-black -rotate-45"></div>
-                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 border-t-2 border-l-2 border-black rotate-[225deg]"></div>
-                          </div>
-                        </div>
                         <div className="text-black text-sm text-center">
                           {formatTime(event.endTime)}
                         </div>
