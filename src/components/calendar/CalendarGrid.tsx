@@ -34,7 +34,10 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const startTime = convertTimeToMinutes(event.startTime);
     const endTime = convertTimeToMinutes(event.endTime);
     
-    console.log(`Checking event ${event.title} at time ${time} - current: ${currentTime}, start: ${startTime}, end: ${endTime}`);
+    // Fix: Handle events that span across midnight
+    if (endTime < startTime) {
+      return currentTime >= startTime || currentTime < endTime;
+    }
     
     return currentTime >= startTime && currentTime < endTime;
   };
@@ -54,7 +57,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
           </div>
           {days.map((_, dayIndex) => {
             const dayEvents = events.filter(event => shouldShowEvent(event, time, dayIndex));
-            console.log(`Time ${time}, Day ${dayIndex}, Events:`, dayEvents);
             
             return (
               <div 
@@ -62,7 +64,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                 className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
                 onClick={() => onDayClick(dayIndex, days[dayIndex])}
               >
-                {dayEvents.map(event => {
+                {events.map(event => {
                   if (!isEventStartingAt(event, time, dayIndex)) return null;
                   
                   const duration = getEventDuration(event);
@@ -72,7 +74,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                     <div
                       key={event.id}
                       className={cn(
-                        "event-card absolute inset-x-0 mx-1 rounded-md overflow-hidden",
+                        "event-card absolute inset-x-0 mx-1 rounded-md overflow-hidden shadow-sm",
                         getEventStyle(event.type)
                       )}
                       style={{
