@@ -36,7 +36,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     
     console.log(`Checking event ${event.title} at time ${time} - current: ${currentTime}, start: ${startTime}, end: ${endTime}`);
     
-    return currentTime >= startTime && currentTime <= endTime;
+    return currentTime >= startTime && currentTime < endTime;
   };
 
   const formatTime = (time: string) => {
@@ -72,7 +72,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                     <div
                       key={event.id}
                       className={cn(
-                        "event-card absolute inset-x-0 mx-1",
+                        "event-card absolute inset-x-0 mx-1 rounded-md overflow-hidden",
                         getEventStyle(event.type)
                       )}
                       style={{
