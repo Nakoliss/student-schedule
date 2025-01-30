@@ -34,7 +34,6 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const startTime = convertTimeToMinutes(event.startTime);
     const endTime = convertTimeToMinutes(event.endTime);
     
-    // Fix: Handle events that span across midnight
     if (endTime < startTime) {
       return currentTime >= startTime || currentTime < endTime;
     }
@@ -64,7 +63,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                 className="calendar-cell relative hover:bg-accent/10 cursor-pointer transition-colors"
                 onClick={() => onDayClick(dayIndex, days[dayIndex])}
               >
-                {events.map(event => {
+                {dayEvents.map(event => {
                   if (!isEventStartingAt(event, time, dayIndex)) return null;
                   
                   const duration = getEventDuration(event);
