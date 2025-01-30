@@ -12,15 +12,26 @@ interface CalendarGridProps {
 
 export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGridProps) => {
   console.log('Events received in CalendarGrid:', events);
+  console.log('Time slots:', timeSlots);
+  console.log('Days:', days);
 
   const getEventDuration = (event: Event) => {
     const startIndex = timeSlots.indexOf(event.startTime);
     const endIndex = timeSlots.indexOf(event.endTime);
+    console.log(`Duration calculation for ${event.title}:`, {
+      startTime: event.startTime,
+      endTime: event.endTime,
+      startIndex,
+      endIndex,
+      duration: endIndex - startIndex
+    });
     return endIndex - startIndex;
   };
 
   const isEventStartingAt = (event: Event, time: string, dayIndex: number) => {
-    return event.startTime === time && event.day === dayIndex;
+    const isStarting = event.startTime === time && event.day === dayIndex;
+    console.log(`Checking if event ${event.title} starts at ${time} on day ${dayIndex}:`, isStarting);
+    return isStarting;
   };
 
   const getEventTopPosition = (time: string) => {
@@ -28,7 +39,15 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const startHour = 8; // Calendar starts at 8:00
     const hourDiff = hours - startHour;
     const minuteOffset = minutes / 60;
-    return (hourDiff + minuteOffset) * 60; // Each hour is 60px high
+    const position = (hourDiff + minuteOffset) * 60; // Each hour is 60px high
+    console.log(`Calculating position for time ${time}:`, {
+      hours,
+      minutes,
+      hourDiff,
+      minuteOffset,
+      position
+    });
+    return position;
   };
 
   return (
@@ -57,7 +76,14 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                     startTime: event.startTime,
                     topPosition,
                     heightInPixels,
-                    duration
+                    duration,
+                    style: {
+                      position: 'absolute',
+                      top: `${topPosition}px`,
+                      left: '4px',
+                      right: '4px',
+                      zIndex: 20
+                    }
                   });
                   
                   return (
