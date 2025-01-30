@@ -15,16 +15,14 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
 
   const getEventTopPosition = (startTime: string) => {
     const [hours, minutes] = startTime.split(':').map(Number);
-    const pixelsPerHour = 60; // Each hour slot is 60px tall
     const totalMinutes = hours * 60 + minutes;
-    const position = (totalMinutes / 60) * pixelsPerHour;
+    const position = totalMinutes;
     
     console.log(`Calculating position for ${startTime}:`, {
       hours,
       minutes,
       totalMinutes,
-      position,
-      pixelsPerHour
+      position
     });
     
     return position;
@@ -38,17 +36,13 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     const endInMinutes = endHours * 60 + endMinutes;
     const durationInMinutes = endInMinutes - startInMinutes;
     
-    // Convert duration to pixels (1 hour = 60px)
-    const heightInPixels = (durationInMinutes / 60) * 60;
-    
     console.log(`Calculating duration from ${startTime} to ${endTime}:`, {
       startInMinutes,
       endInMinutes,
-      durationInMinutes,
-      heightInPixels
+      durationInMinutes
     });
     
-    return heightInPixels;
+    return durationInMinutes;
   };
 
   return (
@@ -69,11 +63,9 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       {events.map(event => {
         const topPosition = getEventTopPosition(event.startTime);
         const heightInPixels = getEventDuration(event.startTime, event.endTime);
-        // First column is for time labels, so we start from column 2 (index 1)
-        // We add 1 to event.day to account for the time column
-        const columnStart = event.day + 1;
-        const leftPosition = `calc(${columnStart * (100 / 8)}% + 4px)`;
-        const width = `calc(${100 / 8}% - 8px)`;
+        const columnStart = event.day + 2; // Add 2 because first column is time labels (1-based)
+        const leftPosition = `calc(${(columnStart) * (100 / 6)}% - 100%/6)`;
+        const width = `calc(100%/6 - 8px)`;
         
         console.log(`Positioning event ${event.title}:`, {
           day: event.day,
