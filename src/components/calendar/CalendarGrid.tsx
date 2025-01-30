@@ -11,7 +11,7 @@ interface CalendarGridProps {
 }
 
 export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGridProps) => {
-  console.log('Events in CalendarGrid:', events);
+  console.log('Events received in CalendarGrid:', events);
 
   const getEventDuration = (event: Event) => {
     const startIndex = timeSlots.indexOf(event.startTime);
@@ -28,14 +28,9 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
     return (hours * 60) + minutes;
   };
 
-  const shouldShowEvent = (event: Event, time: string, dayIndex: number) => {
-    if (event.day !== dayIndex) return false;
-    
-    const currentTime = convertTimeToMinutes(time);
-    const startTime = convertTimeToMinutes(event.startTime);
-    const endTime = convertTimeToMinutes(event.endTime);
-    
-    return currentTime >= startTime && currentTime < endTime;
+  const getEventTopPosition = (startTime: string) => {
+    const startIndex = timeSlots.indexOf(startTime);
+    return startIndex * 60; // Each time slot is 60px high
   };
 
   return (
@@ -45,7 +40,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
           <TimeCell time={time} />
           {days.map((_, dayIndex) => {
             const dayEvents = events.filter(event => event.day === dayIndex);
-            console.log(`Events for day ${dayIndex}:`, dayEvents);
+            console.log(`Rendering events for day ${dayIndex}:`, dayEvents);
             
             return (
               <div 
@@ -58,6 +53,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                   
                   const duration = getEventDuration(event);
                   const heightInPixels = duration * 60;
+                  const topPosition = getEventTopPosition(event.startTime);
                   
                   return (
                     <EventCard
@@ -65,6 +61,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
                       event={event}
                       heightInPixels={heightInPixels}
                       getEventStyle={getEventStyle}
+                      style={{ top: `${topPosition}px` }}
                     />
                   );
                 })}

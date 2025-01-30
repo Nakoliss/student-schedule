@@ -5,9 +5,10 @@ interface EventCardProps {
   event: Event;
   heightInPixels: number;
   getEventStyle: (type: Event['type']) => string;
+  style?: React.CSSProperties;
 }
 
-export const EventCard = ({ event, heightInPixels, getEventStyle }: EventCardProps) => {
+export const EventCard = ({ event, heightInPixels, getEventStyle, style }: EventCardProps) => {
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
@@ -22,8 +23,8 @@ export const EventCard = ({ event, heightInPixels, getEventStyle }: EventCardPro
       )}
       style={{
         height: `${heightInPixels}px`,
-        top: '0px',
-        zIndex: 10
+        zIndex: 10,
+        ...style
       }}
     >
       <div className="flex flex-col h-full justify-between p-1">
