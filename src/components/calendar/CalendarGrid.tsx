@@ -13,43 +13,6 @@ interface CalendarGridProps {
 export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGridProps) => {
   console.log('Events received in CalendarGrid:', events);
 
-  const getEventTopPosition = (startTime: string) => {
-    const [hours, minutes] = startTime.split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes;
-    const position = (totalMinutes / 60) * 60; // Convert to match 60px cell height
-    
-    console.log(`Calculating position for ${startTime}:`, {
-      hours,
-      minutes,
-      totalMinutes,
-      position,
-      cellHeight: 60
-    });
-    
-    return `${position}px`;
-  };
-
-  const getEventDuration = (startTime: string, endTime: string) => {
-    const [startHours, startMinutes] = startTime.split(':').map(Number);
-    const [endHours, endMinutes] = endTime.split(':').map(Number);
-    
-    const startInMinutes = startHours * 60 + startMinutes;
-    const endInMinutes = endHours * 60 + endMinutes;
-    const durationInMinutes = endInMinutes - startInMinutes;
-    
-    // Convert duration to match 60px cell height
-    const heightInPixels = (durationInMinutes / 60) * 60;
-    
-    console.log(`Calculating duration from ${startTime} to ${endTime}:`, {
-      startInMinutes,
-      endInMinutes,
-      durationInMinutes,
-      heightInPixels
-    });
-    
-    return `${heightInPixels}px`;
-  };
-
   return (
     <div className="calendar-grid relative">
       {timeSlots.map((time) => (
@@ -66,35 +29,46 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       ))}
 
       {events.map(event => {
-        const dayColumnWidth = 100 / 6; // 6 columns (5 days + time column)
-        const left = `${((event.day + 1) * dayColumnWidth)}%`;
-        const width = `${dayColumnWidth}%`;
-        const top = getEventTopPosition(event.startTime);
-        const height = getEventDuration(event.startTime, event.endTime);
+        // Parse times (e.g., "15:15")
+        const [hours, minutes] = event.startTime.split(':').map(Number);
+        const [endHours, endMinutes] = event.endTime.split(':').map(Number);
         
-        console.log(`Positioning event ${event.title}:`, {
-          top,
-          height,
-          left,
-          width,
-          day: event.day,
-          startTime: event.startTime,
-          endTime: event.endTime
+        // Convert to percentages
+        // Each hour = 4.167% (100% / 24 hours)
+        // Each minute = 0.069% (4.167% / 60 minutes)
+        const startPercent = (hours * (100/24)) + (minutes * (100/1440));
+        const endPercent = (endHours * (100/24)) + (endMinutes * (100/1440));
+        const heightPercent = endPercent - startPercent;
+        
+        console.log('Event calculation:', {
+          title: event.title,
+          startTime: `${hours}:${minutes}`,
+          endTime: `${endHours}:${endMinutes}`,
+          startPercent,
+          endPercent,
+          heightPercent
         });
+        
+        // Column positioning
+        const timeColWidth = 60;
+        const dayWidth = `calc((100% - ${timeColWidth}px) / ${days.length})`;
+        const left = `calc(${timeColWidth}px + (${event.day} * ${dayWidth}))`;
+        
+        const style = {
+          position: 'absolute' as const,
+          top: `${startPercent}%`,
+          left,
+          width: dayWidth,
+          height: `${heightPercent}%`,
+          zIndex: 20
+        };
         
         return (
           <EventCard
             key={event.id}
             event={event}
             getEventStyle={getEventStyle}
-            style={{ 
-              position: 'absolute',
-              top,
-              left,
-              width,
-              height,
-              zIndex: 20
-            }}
+            style={style}
           />
         );
       })}

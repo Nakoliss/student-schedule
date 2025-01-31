@@ -45,11 +45,11 @@
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: 80px repeat(5, 1fr);
+  grid-template-columns: 60px repeat(5, 1fr);
   gap: 0;
   border: 1px solid hsl(var(--border));
   border-top: none;
-  width: 100%;
+  position: relative;
   min-width: min-content;
 }
 
@@ -59,6 +59,7 @@
   padding: 0.5rem;
   border-right: 1px solid hsl(var(--border));
   border-bottom: 1px solid hsl(var(--border));
+  position: relative;
 }
 
 .time-cell {

@@ -3,15 +3,10 @@ interface TimeCellProps {
 }
 
 export const TimeCell = ({ time }: TimeCellProps) => {
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours);
-    return `${hour}:${minutes}`;
-  };
-
+  // No formatting needed - keep 24-hour time
   return (
     <div className="calendar-cell time-cell">
-      {formatTime(time)}
+      {time}
     </div>
   );
 };

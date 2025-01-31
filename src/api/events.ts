@@ -2,7 +2,7 @@ import type { Event } from '@/components/calendar/types';
 
 const STORAGE_KEY = 'student_schedule_events';
 
-// Empty initial state - no test events
+// Empty initial state
 const INITIAL_EVENTS: Event[] = [];
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
