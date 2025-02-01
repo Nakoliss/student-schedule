@@ -23,14 +23,6 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
         overflow: "hidden"
       }}
     >
-      <div 
-        className="absolute top-0 left-0 w-full h-full opacity-10"
-        style={{
-          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 23px, #000 24px)`,
-          backgroundSize: "100% 24px",
-          pointerEvents: "none"
-        }}
-      />
       <div className="relative z-10 flex flex-col h-full">
         <h3 className="font-bold text-xl text-white text-center mb-4">Notes de cours</h3>
         <div className="mb-4"></div>
