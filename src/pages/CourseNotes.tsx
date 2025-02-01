@@ -11,7 +11,7 @@ const CourseNotes = () => {
   const { courseId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const courseTitle = location.state?.courseTitle || "Cours";
+  const courseTitle = location.state?.courseTitle || "Sans titre";
   const [notes, setNotes] = useState<Note[]>([]);
 
   useEffect(() => {
