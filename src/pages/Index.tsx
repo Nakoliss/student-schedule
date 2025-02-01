@@ -5,11 +5,38 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEvents } from "@/hooks/use-events";
 
 const Index = () => {
   const isMobile = useIsMobile();
   const [showSidebar, setShowSidebar] = useState(!isMobile);
   const navigate = useNavigate();
+  const { events } = useEvents();
+
+  // Find the current course based on events
+  const getCurrentCourse = () => {
+    const now = new Date();
+    const currentEvent = events.find(event => {
+      const [hours, minutes] = event.startTime.split(':').map(Number);
+      const [endHours, endMinutes] = event.endTime.split(':').map(Number);
+      const eventDate = new Date();
+      eventDate.setHours(hours, minutes, 0);
+      const eventEndDate = new Date();
+      eventEndDate.setHours(endHours, endMinutes, 0);
+      return now >= eventDate && now <= eventEndDate;
+    });
+    return currentEvent?.courseId;
+  };
+
+  const handleNotesClick = () => {
+    const currentCourseId = getCurrentCourse();
+    if (currentCourseId) {
+      navigate(`/course/${currentCourseId}/notes`);
+    } else {
+      // If no current course, navigate to courses list
+      navigate('/courses');
+    }
+  };
 
   return (
     <div className="flex min-h-screen relative">
@@ -25,10 +52,10 @@ const Index = () => {
       )}
 
       <Button
-        onClick={() => navigate('/courses')}
+        onClick={handleNotesClick}
         className="absolute top-4 right-20 z-50"
       >
-        Liste de cours
+        Notes de cours
       </Button>
 
       <main className="flex-1 overflow-x-auto">
