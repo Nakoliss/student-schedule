@@ -32,15 +32,13 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
         }}
       />
       <div className="relative z-10 flex flex-col h-full">
-        <h3 className="font-bold text-xl text-white mb-4">{event.title}</h3>
+        <h3 className="font-bold text-xl text-white text-center mb-4">Notes de cours</h3>
+        <div className="mb-4"></div>
+        <h4 className="font-bold text-lg text-white mb-2">{event.title}</h4>
         <p className="text-gray-200 mb-auto">
           {days[event.day]} • {event.startTime} - {event.endTime}
         </p>
-        <span className={`mt-3 inline-block px-3 py-1 rounded-full text-sm ${
-          event.type === 'class' ? 'bg-blue-200 text-blue-900' :
-          event.type === 'study' ? 'bg-green-200 text-green-900' :
-          'bg-gray-200 text-gray-900'
-        }`}>
+        <span className="hidden">
           {event.type === 'class' ? 'Cours' :
            event.type === 'study' ? 'Étude' :
            'Autre'}
