@@ -1,16 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ArrowLeft } from "lucide-react";
 import { useEvents } from "@/hooks/use-events";
 import { AddCourseDialog } from "@/components/calendar/AddCourseDialog";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { days } from "@/components/calendar/constants";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const CourseList = () => {
   const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
   const { events, createEvent, clearAllEvents } = useEvents();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleAddCourse = () => {
     console.log("Opening add course dialog from CourseList");
@@ -35,6 +37,17 @@ const CourseList = () => {
 
   return (
     <div className="container mx-auto p-8">
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="mb-4"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Retour
+        </Button>
+      </div>
+
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Liste de cours</h1>
         <div className="flex gap-2">
