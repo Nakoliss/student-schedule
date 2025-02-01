@@ -35,9 +35,10 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
         <h3 className="font-bold text-xl text-white text-center mb-4">Notes de cours</h3>
         <div className="mb-4"></div>
         <h4 className="font-bold text-lg text-white mb-2">{event.title}</h4>
-        <p className="text-gray-200 mb-auto">
-          {days[event.day]} • {event.startTime} - {event.endTime}
-        </p>
+        <div className="text-gray-200 mb-auto">
+          <p className="mb-1">{days[event.day]}</p>
+          <p>{event.startTime} - {event.endTime}</p>
+        </div>
         <span className="hidden">
           {event.type === 'class' ? 'Cours' :
            event.type === 'study' ? 'Étude' :
