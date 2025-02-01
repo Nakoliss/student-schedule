@@ -25,7 +25,7 @@ const Index = () => {
       eventEndDate.setHours(endHours, endMinutes, 0);
       return now >= eventDate && now <= eventEndDate;
     });
-    return currentEvent?.courseId;
+    return currentEvent?.id;
   };
 
   const handleNotesClick = () => {
@@ -34,7 +34,7 @@ const Index = () => {
       navigate(`/course/${currentCourseId}/notes`);
     } else {
       // If no current course, navigate to courses list
-      navigate('/courses');
+      navigate('/courses_notes');
     }
   };
 

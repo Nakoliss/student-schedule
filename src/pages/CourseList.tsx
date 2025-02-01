@@ -36,10 +36,8 @@ const CourseList = () => {
   };
 
   const handleCourseClick = (courseId: string, courseTitle: string) => {
-    console.log("Navigating to course:", courseId, "with title:", courseTitle);
-    navigate(`/course/${courseId}`, { 
-      state: { courseTitle } 
-    });
+    console.log("Navigating directly to course notes:", courseId);
+    navigate(`/course/${courseId}/notes`);
   };
 
   return (

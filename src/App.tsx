@@ -31,7 +31,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/calendar" element={<Index />} />
-            <Route path="/courses" element={<CourseList />} />
+            <Route path="/courses_notes" element={<CourseList />} />
             <Route path="/day/:dayIndex" element={<DayView />} />
             <Route path="/course/:courseId" element={<CourseView />} />
             <Route path="/course/:courseId/notes" element={<CourseNotes />} />
