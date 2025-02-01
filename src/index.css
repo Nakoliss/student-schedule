@@ -126,7 +126,6 @@
   font-size: 16px !important;
   min-height: 500px !important;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  border-right: 2px solid #d1d5db;
 }
 
 .notebook-paper-right {
@@ -157,6 +156,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
+  position: relative;
 }
 
 .notebook-spine {
@@ -164,8 +164,29 @@
   left: 50%;
   top: 0;
   bottom: 0;
-  width: 4px;
-  background: linear-gradient(to right, #d1d5db, #e5e7eb, #d1d5db);
+  width: 30px;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 10px,
+    #d1d5db 10px,
+    #d1d5db 12px
+  );
   transform: translateX(-50%);
   z-index: 10;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-image: repeating-linear-gradient(
+      90deg,
+      #e5e7eb,
+      #e5e7eb 2px,
+      transparent 2px,
+      transparent 4px
+    );
+  }
 }
