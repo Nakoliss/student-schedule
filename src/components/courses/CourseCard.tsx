@@ -12,7 +12,7 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
   
   return (
     <Card 
-      className="p-6 cursor-pointer transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[400px]"
+      className="p-4 cursor-pointer transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[300px]"
       onClick={() => onClick(event.id, event.title)}
       style={{
         background: "linear-gradient(to right, #d7d2cc 0%, #304352 100%)",
@@ -38,7 +38,7 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
         </span>
       </div>
       <div 
-        className="absolute bottom-0 right-0 w-16 h-16"
+        className="absolute bottom-0 right-0 w-12 h-12"
         style={{
           background: "linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.1) 50%)",
           borderTopLeftRadius: "8px"
