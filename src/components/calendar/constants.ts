@@ -8,5 +8,5 @@ export const timeSlots = Array.from({ length: 48 }, (_, i) => {
 export const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
 export const weekendDays = ['Samedi', 'Dimanche'];
 
-// Calendar always starts at 00:00
-export const DEFAULT_SCROLL_TIME = "00:00";
+// Calendar starts at 8:00 by default
+export const DEFAULT_SCROLL_TIME = "08:00";
