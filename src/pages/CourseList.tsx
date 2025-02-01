@@ -37,7 +37,6 @@ const CourseList = () => {
 
   const handleCourseClick = (courseId: string, courseTitle: string) => {
     console.log("Navigating directly to course note editor:", courseId);
-    // Create a default note ID using the courseId to ensure consistency
     const defaultNoteId = `note-${courseId}`;
     navigate(`/course/${courseId}/notes/${defaultNoteId}`, {
       state: { courseTitle }
@@ -49,11 +48,11 @@ const CourseList = () => {
       <div className="mb-6">
         <Button
           variant="ghost"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/calendar')}
           className="mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Retour
+          Retour au calendrier
         </Button>
       </div>
 

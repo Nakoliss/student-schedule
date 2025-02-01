@@ -1,23 +1,18 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useEffect } from "react";
-import { useEvents } from "@/hooks/use-events";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const STORAGE_KEY_PREFIX = 'course_notes_';
+const STORAGE_KEY_PREFIX = 'note_';
 
 const NoteEditor = () => {
   const { courseId } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { events } = useEvents();
-  const courseTitle = location.state?.courseTitle || 
-    events.find(event => event.id === courseId)?.title || 
-    "Sans titre";
   const [content, setContent] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('Loading note for course:', courseId);
     if (courseId) {
       const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}`);
       if (stored) {
@@ -36,33 +31,32 @@ const NoteEditor = () => {
     }
   }, [courseId]);
 
-  const handleContentChange = (newContent: string) => {
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value;
     setContent(newContent);
-    localStorage.setItem(`${STORAGE_KEY_PREFIX}${courseId}`, newContent);
+    if (courseId) {
+      localStorage.setItem(`${STORAGE_KEY_PREFIX}${courseId}`, newContent);
+    }
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="flex items-center justify-between mb-8">
-        <Button 
-          variant="ghost" 
+    <div className="container mx-auto p-8">
+      <div className="mb-6">
+        <Button
+          variant="ghost"
           onClick={() => navigate('/courses_notes')}
+          className="mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Retour
+          Retour aux cours
         </Button>
       </div>
-
-      <h1 className="text-4xl font-bold mb-8">{courseTitle}</h1>
-
-      <div className="notebook-container">
-        <Textarea
-          value={content}
-          onChange={(e) => handleContentChange(e.target.value)}
-          className="notebook-paper min-h-[calc(100vh-250px)]"
-          placeholder="Écrivez vos notes ici..."
-        />
-      </div>
+      <Textarea
+        value={content}
+        onChange={handleContentChange}
+        placeholder="Prenez vos notes ici..."
+        className="min-h-[70vh] p-4"
+      />
     </div>
   );
 };
