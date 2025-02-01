@@ -56,14 +56,16 @@ const NoteEditor = () => {
       </div>
 
       <h1 className="text-4xl font-bold mb-2">{note.title}</h1>
-      <h2 className="text-2xl text-muted-foreground mb-8">{courseTitle}</h2>
+      <h2 className="text-2xl text-muted-foreground mb-4">{courseTitle}</h2>
 
-      <Textarea
-        value={note.content}
-        onChange={(e) => handleContentChange(e.target.value)}
-        className="min-h-[500px] p-4"
-        placeholder="Écrivez vos notes ici..."
-      />
+      <div className="notebook-container">
+        <Textarea
+          value={note.content}
+          onChange={(e) => handleContentChange(e.target.value)}
+          className="notebook-paper"
+          placeholder="Écrivez vos notes ici..."
+        />
+      </div>
     </div>
   );
 };
