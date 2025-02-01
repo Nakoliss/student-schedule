@@ -61,7 +61,10 @@ const CourseList = () => {
         onClearCourses={handleClearAllCourses}
       />
 
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-fr" style={{ gridAutoRows: "minmax(300px, auto)" }}>
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" style={{ 
+        gridAutoRows: "400px",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))"
+      }}>
         {events.map((event) => (
           <CourseCard
             key={event.id}

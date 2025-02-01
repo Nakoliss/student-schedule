@@ -12,7 +12,7 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
   
   return (
     <Card 
-      className="p-4 cursor-pointer transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[300px]"
+      className="p-4 cursor-pointer transition-all transform hover:-translate-y-1 hover:shadow-lg"
       onClick={() => onClick(event.id, event.title)}
       style={{
         background: "linear-gradient(to right, #d7d2cc 0%, #304352 100%)",
@@ -20,7 +20,8 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
         border: "2px solid #304352",
         boxShadow: "2px 2px 5px rgba(0,0,0,0.2)",
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
+        height: "100%"
       }}
     >
       <div className="relative z-10 flex flex-col h-full">
