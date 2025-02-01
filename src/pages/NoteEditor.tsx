@@ -15,7 +15,8 @@ const NoteEditor = () => {
   const courseTitle = location.state?.courseTitle || 
     events.find(event => event.id === courseId)?.title || 
     "Sans titre";
-  const [content, setContent] = useState("");
+  const [leftContent, setLeftContent] = useState("");
+  const [rightContent, setRightContent] = useState("");
 
   useEffect(() => {
     console.log('Loading note for course:', courseId);
@@ -24,21 +25,32 @@ const NoteEditor = () => {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          if (typeof parsed === 'string') {
-            setContent(parsed);
+          if (typeof parsed === 'object' && parsed !== null) {
+            setLeftContent(parsed.left || "");
+            setRightContent(parsed.right || "");
+          } else if (typeof parsed === 'string') {
+            setLeftContent(parsed);
           }
         } catch {
-          setContent(stored);
+          setLeftContent(stored);
         }
       }
     }
   }, [courseId]);
 
-  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newContent = e.target.value;
-    setContent(newContent);
+  const handleContentChange = (side: 'left' | 'right', value: string) => {
+    if (side === 'left') {
+      setLeftContent(value);
+    } else {
+      setRightContent(value);
+    }
+    
     if (courseId) {
-      localStorage.setItem(`${STORAGE_KEY_PREFIX}${courseId}`, newContent);
+      const content = {
+        left: side === 'left' ? value : leftContent,
+        right: side === 'right' ? value : rightContent
+      };
+      localStorage.setItem(`${STORAGE_KEY_PREFIX}${courseId}`, JSON.stringify(content));
     }
   };
 
@@ -56,12 +68,19 @@ const NoteEditor = () => {
 
       <h1 className="text-4xl font-bold mb-8">{courseTitle}</h1>
 
-      <div className="notebook-container">
+      <div className="notebook-container relative">
+        <div className="notebook-spine" />
         <Textarea
-          value={content}
-          onChange={handleContentChange}
+          value={leftContent}
+          onChange={(e) => handleContentChange('left', e.target.value)}
           className="notebook-paper min-h-[calc(100vh-250px)]"
           placeholder="Prenez vos notes ici..."
+        />
+        <Textarea
+          value={rightContent}
+          onChange={(e) => handleContentChange('right', e.target.value)}
+          className="notebook-paper-right min-h-[calc(100vh-250px)]"
+          placeholder="Continuez vos notes ici..."
         />
       </div>
     </div>
