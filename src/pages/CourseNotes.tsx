@@ -56,8 +56,8 @@ const CourseNotes = () => {
         </Button>
       </div>
 
-      <h1 className="text-4xl font-bold mb-2">Notes de cours</h1>
-      <h2 className="text-2xl text-muted-foreground mb-8">{courseTitle}</h2>
+      <h1 className="text-4xl font-bold mb-2">{courseTitle}</h1>
+      <h2 className="text-2xl text-muted-foreground mb-8">Notes de cours</h2>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {notes.map(note => (
