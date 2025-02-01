@@ -8,6 +8,21 @@ interface EventCardProps {
 }
 
 export const EventCard = ({ event, getEventStyle, style }: EventCardProps) => {
+  // Calculate duration in minutes
+  const [startHours, startMinutes] = event.startTime.split(':').map(Number);
+  const [endHours, endMinutes] = event.endTime.split(':').map(Number);
+  const durationInMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
+  
+  console.log('Event duration calculation:', {
+    event: event.title,
+    startTime: event.startTime,
+    endTime: event.endTime,
+    durationInMinutes
+  });
+
+  // Determine if event is less than 1 hour
+  const isShortEvent = durationInMinutes < 60;
+
   return (
     <div
       className={cn(
@@ -20,9 +35,17 @@ export const EventCard = ({ event, getEventStyle, style }: EventCardProps) => {
         <div className="text-black">
           <span className="hidden md:inline font-medium">{event.title}</span>
           <span className="md:hidden font-medium">{event.title.substring(0, 3)}...</span>
-          <div className="text-sm text-center">{event.startTime}</div>
+          <div className={cn(
+            "text-center",
+            isShortEvent ? "text-xs" : "text-sm"
+          )}>
+            {event.startTime}
+          </div>
         </div>
-        <div className="text-black text-sm text-center mt-auto">
+        <div className={cn(
+          "text-black text-center mt-auto",
+          isShortEvent ? "text-xs" : "text-sm"
+        )}>
           {event.endTime}
         </div>
       </div>
