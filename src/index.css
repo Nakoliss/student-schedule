@@ -162,8 +162,8 @@
 .notebook-spine {
   position: absolute;
   left: 50%;
-  top: 0;
-  bottom: 0;
+  top: 24px;
+  bottom: 24px;
   width: 30px;
   background-image: repeating-linear-gradient(
     0deg,
