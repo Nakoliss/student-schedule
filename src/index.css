@@ -126,6 +126,7 @@
   font-size: 16px !important;
   min-height: 500px !important;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  resize: none;
 }
 
 .notebook-paper-right {
@@ -140,11 +141,12 @@
   font-size: 16px !important;
   min-height: 500px !important;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  resize: none;
 }
 
 .notebook-paper:focus, .notebook-paper-right:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(216, 140, 154, 0.2);
+  box-shadow: none;
 }
 
 .notebook-container {
