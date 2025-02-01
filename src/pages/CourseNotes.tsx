@@ -4,6 +4,7 @@ import { ArrowLeft, Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import type { Note } from "@/components/calendar/types";
+import { useEvents } from "@/hooks/use-events";
 
 const STORAGE_KEY_PREFIX = 'course_notes_';
 
@@ -11,7 +12,10 @@ const CourseNotes = () => {
   const { courseId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const courseTitle = location.state?.courseTitle || "Sans titre";
+  const { events } = useEvents();
+  const courseTitle = location.state?.courseTitle || 
+    events.find(event => event.id === courseId)?.title || 
+    "Sans titre";
   const [notes, setNotes] = useState<Note[]>([]);
 
   useEffect(() => {

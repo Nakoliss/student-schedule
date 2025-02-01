@@ -35,9 +35,11 @@ const CourseList = () => {
     }
   };
 
-  const handleCourseClick = (courseId: string) => {
-    console.log("Navigating to course:", courseId);
-    navigate(`/course/${courseId}`);
+  const handleCourseClick = (courseId: string, courseTitle: string) => {
+    console.log("Navigating to course:", courseId, "with title:", courseTitle);
+    navigate(`/course/${courseId}`, { 
+      state: { courseTitle } 
+    });
   };
 
   return (
@@ -72,7 +74,7 @@ const CourseList = () => {
           <Card 
             key={event.id} 
             className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-            onClick={() => handleCourseClick(event.id)}
+            onClick={() => handleCourseClick(event.id, event.title)}
           >
             <div className="flex justify-between items-center">
               <div>
