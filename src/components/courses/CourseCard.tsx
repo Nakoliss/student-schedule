@@ -8,28 +8,51 @@ interface CourseCardProps {
 }
 
 export const CourseCard = ({ event, onClick }: CourseCardProps) => {
+  console.log("Rendering CourseCard for:", event.title);
+  
   return (
     <Card 
-      className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+      className="p-6 cursor-pointer transition-all transform hover:-translate-y-1 hover:shadow-lg"
       onClick={() => onClick(event.id, event.title)}
+      style={{
+        background: "linear-gradient(to right, #d7d2cc 0%, #304352 100%)",
+        borderRadius: "8px",
+        border: "2px solid #304352",
+        boxShadow: "2px 2px 5px rgba(0,0,0,0.2)",
+        position: "relative",
+        overflow: "hidden"
+      }}
     >
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="font-semibold">{event.title}</h3>
-          <p className="text-sm text-muted-foreground">
-            {days[event.day]} • {event.startTime} - {event.endTime}
-          </p>
-        </div>
-        <span className={`px-2 py-1 rounded-full text-xs ${
-          event.type === 'class' ? 'bg-blue-100 text-blue-800' :
-          event.type === 'study' ? 'bg-green-100 text-green-800' :
-          'bg-gray-100 text-gray-800'
+      <div 
+        className="absolute top-0 left-0 w-full h-full opacity-10"
+        style={{
+          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 23px, #000 24px)`,
+          backgroundSize: "100% 24px",
+          pointerEvents: "none"
+        }}
+      />
+      <div className="relative z-10">
+        <h3 className="font-bold text-xl text-white mb-2">{event.title}</h3>
+        <p className="text-gray-200">
+          {days[event.day]} • {event.startTime} - {event.endTime}
+        </p>
+        <span className={`mt-3 inline-block px-3 py-1 rounded-full text-sm ${
+          event.type === 'class' ? 'bg-blue-200 text-blue-900' :
+          event.type === 'study' ? 'bg-green-200 text-green-900' :
+          'bg-gray-200 text-gray-900'
         }`}>
           {event.type === 'class' ? 'Cours' :
            event.type === 'study' ? 'Étude' :
            'Autre'}
         </span>
       </div>
+      <div 
+        className="absolute bottom-0 right-0 w-16 h-16"
+        style={{
+          background: "linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.1) 50%)",
+          borderTopLeftRadius: "8px"
+        }}
+      />
     </Card>
   );
 };

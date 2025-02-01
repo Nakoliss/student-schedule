@@ -61,7 +61,7 @@ const CourseList = () => {
         onClearCourses={handleClearAllCourses}
       />
 
-      <div className="grid gap-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
           <CourseCard
             key={event.id}
