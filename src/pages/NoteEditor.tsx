@@ -21,7 +21,17 @@ const NoteEditor = () => {
     if (courseId) {
       const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}`);
       if (stored) {
-        setContent(stored);
+        try {
+          // Try to parse it in case it's JSON
+          const parsed = JSON.parse(stored);
+          // If it's an array or object, ignore it and start fresh
+          if (typeof parsed === 'string') {
+            setContent(parsed);
+          }
+        } catch {
+          // If it's not JSON, use it directly
+          setContent(stored);
+        }
       }
     }
   }, [courseId]);
