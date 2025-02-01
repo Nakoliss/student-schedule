@@ -37,14 +37,14 @@ export const EventCard = ({ event, getEventStyle, style }: EventCardProps) => {
           <span className="md:hidden font-medium">{event.title.substring(0, 3)}...</span>
           <div className={cn(
             "text-center",
-            isShortEvent ? "text-xs" : "text-sm"
+            isShortEvent ? "text-[10px]" : "text-sm"
           )}>
             {event.startTime}
           </div>
         </div>
         <div className={cn(
           "text-black text-center mt-auto",
-          isShortEvent ? "text-xs" : "text-sm"
+          isShortEvent ? "text-[10px]" : "text-sm"
         )}>
           {event.endTime}
         </div>
