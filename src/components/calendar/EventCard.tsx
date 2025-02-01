@@ -32,15 +32,21 @@ export const EventCard = ({ event, getEventStyle, style }: EventCardProps) => {
       style={style}
     >
       <div className={cn(
-        "flex flex-col h-full justify-between min-h-[60px]",
-        isShortEvent ? "p-0.5" : "p-1"
+        "flex flex-col h-full",
+        isShortEvent ? "p-0.5 gap-0" : "p-1 gap-1"
       )}>
-        <div className="text-black">
-          <span className={cn(
-            "hidden md:inline font-medium",
-            !isShortEvent && "text-base"
-          )}>{event.title}</span>
-          <span className="md:hidden font-medium">{event.title.substring(0, 3)}...</span>
+        <div className={cn(
+          "text-black flex flex-col h-full",
+          !isShortEvent && "flex-1"
+        )}>
+          <div>
+            <span className={cn(
+              "hidden md:inline font-medium",
+              !isShortEvent && "text-base"
+            )}>{event.title}</span>
+            <span className="md:hidden font-medium">{event.title.substring(0, 3)}...</span>
+          </div>
+          
           {isShortEvent ? (
             <div className="text-center text-sm">
               {event.startTime} - {event.endTime}
@@ -50,7 +56,7 @@ export const EventCard = ({ event, getEventStyle, style }: EventCardProps) => {
               <div className="text-center text-base">
                 {event.startTime}
               </div>
-              <div className="text-center text-base mt-auto mb-0">
+              <div className="text-center text-base mt-auto">
                 {event.endTime}
               </div>
             </>
