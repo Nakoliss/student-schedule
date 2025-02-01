@@ -36,8 +36,12 @@ const CourseList = () => {
   };
 
   const handleCourseClick = (courseId: string, courseTitle: string) => {
-    console.log("Navigating directly to course notes:", courseId);
-    navigate(`/course/${courseId}/notes`);
+    console.log("Navigating directly to course note editor:", courseId);
+    // Create a default note ID using the courseId to ensure consistency
+    const defaultNoteId = `note-${courseId}`;
+    navigate(`/course/${courseId}/notes/${defaultNoteId}`, {
+      state: { courseTitle }
+    });
   };
 
   return (

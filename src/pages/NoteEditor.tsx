@@ -3,66 +3,53 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
-import type { Note } from "@/components/calendar/types";
+import { useEvents } from "@/hooks/use-events";
 
 const STORAGE_KEY_PREFIX = 'course_notes_';
 
 const NoteEditor = () => {
-  const { courseId, noteId } = useParams();
+  const { courseId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const courseTitle = location.state?.courseTitle || "Cours";
-  const initialNote = location.state?.note;
-  const [note, setNote] = useState<Note | null>(initialNote);
+  const { events } = useEvents();
+  const courseTitle = location.state?.courseTitle || 
+    events.find(event => event.id === courseId)?.title || 
+    "Sans titre";
+  const [content, setContent] = useState("");
 
   useEffect(() => {
-    if (!note && noteId) {
+    if (courseId) {
       const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}`);
       if (stored) {
-        const notes: Note[] = JSON.parse(stored);
-        const foundNote = notes.find(n => n.id === noteId);
-        if (foundNote) setNote(foundNote);
+        setContent(stored);
       }
     }
-  }, [courseId, noteId, note]);
+  }, [courseId]);
 
-  const saveNote = (updatedNote: Note) => {
-    const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}`);
-    const notes: Note[] = stored ? JSON.parse(stored) : [];
-    const updatedNotes = notes.map(n => n.id === updatedNote.id ? updatedNote : n);
-    localStorage.setItem(`${STORAGE_KEY_PREFIX}${courseId}`, JSON.stringify(updatedNotes));
-    setNote(updatedNote);
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent);
+    localStorage.setItem(`${STORAGE_KEY_PREFIX}${courseId}`, newContent);
   };
-
-  const handleContentChange = (content: string) => {
-    if (note) {
-      const updatedNote = { ...note, content };
-      saveNote(updatedNote);
-    }
-  };
-
-  if (!note) return null;
 
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <Button 
           variant="ghost" 
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/courses_notes')}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
       </div>
 
-      <h1 className="text-4xl font-bold mb-2">{note.title}</h1>
-      <h2 className="text-2xl text-muted-foreground mb-4">{courseTitle}</h2>
+      <h1 className="text-4xl font-bold mb-8">{courseTitle}</h1>
 
       <div className="notebook-container">
         <Textarea
-          value={note.content}
+          value={content}
           onChange={(e) => handleContentChange(e.target.value)}
-          className="notebook-paper"
+          className="notebook-paper min-h-[calc(100vh-250px)]"
           placeholder="Écrivez vos notes ici..."
         />
       </div>

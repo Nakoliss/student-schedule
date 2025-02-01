@@ -7,10 +7,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import DayView from "./pages/DayView";
-import CourseView from "./pages/CourseView";
-import CourseNotes from "./pages/CourseNotes";
-import NoteEditor from "./pages/NoteEditor";
 import CourseList from "./pages/CourseList";
+import NoteEditor from "./pages/NoteEditor";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,8 +31,6 @@ const App = () => (
             <Route path="/calendar" element={<Index />} />
             <Route path="/courses_notes" element={<CourseList />} />
             <Route path="/day/:dayIndex" element={<DayView />} />
-            <Route path="/course/:courseId" element={<CourseView />} />
-            <Route path="/course/:courseId/notes" element={<CourseNotes />} />
             <Route path="/course/:courseId/notes/:noteId" element={<NoteEditor />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
