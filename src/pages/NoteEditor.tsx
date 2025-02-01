@@ -55,10 +55,8 @@ const NoteEditor = () => {
         </Button>
       </div>
 
-      <h1 className="text-4xl font-bold mb-2">{note.title}</h1>
-      <h2 className="text-2xl text-muted-foreground mb-4">{courseTitle}</h2>
-
       <div className="notebook-container">
+        <div className="notebook-title">{note.title}</div>
         <Textarea
           value={note.content}
           onChange={(e) => handleContentChange(e.target.value)}
