@@ -12,7 +12,7 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
   
   return (
     <Card 
-      className="p-6 cursor-pointer transition-all transform hover:-translate-y-1 hover:shadow-lg"
+      className="p-6 cursor-pointer transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[400px]"
       onClick={() => onClick(event.id, event.title)}
       style={{
         background: "linear-gradient(to right, #d7d2cc 0%, #304352 100%)",
@@ -31,9 +31,9 @@ export const CourseCard = ({ event, onClick }: CourseCardProps) => {
           pointerEvents: "none"
         }}
       />
-      <div className="relative z-10">
-        <h3 className="font-bold text-xl text-white mb-2">{event.title}</h3>
-        <p className="text-gray-200">
+      <div className="relative z-10 flex flex-col h-full">
+        <h3 className="font-bold text-xl text-white mb-4">{event.title}</h3>
+        <p className="text-gray-200 mb-auto">
           {days[event.day]} • {event.startTime} - {event.endTime}
         </p>
         <span className={`mt-3 inline-block px-3 py-1 rounded-full text-sm ${
