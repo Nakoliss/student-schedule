@@ -29,21 +29,25 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
       ))}
 
       {events.map(event => {
-        // Parse times (e.g., "15:15")
-        const [hours, minutes] = event.startTime.split(':').map(Number);
+        // Parse times (e.g., "09:00")
+        const [startHours, startMinutes] = event.startTime.split(':').map(Number);
         const [endHours, endMinutes] = event.endTime.split(':').map(Number);
         
-        // Convert to percentages
-        // Each hour = 4.167% (100% / 24 hours)
-        // Each minute = 0.069% (4.167% / 60 minutes)
-        const startPercent = (hours * (100/24)) + (minutes * (100/1440));
-        const endPercent = (endHours * (100/24)) + (endMinutes * (100/1440));
+        // Calculate total minutes since midnight for start and end times
+        const startTotalMinutes = startHours * 60 + startMinutes;
+        const endTotalMinutes = endHours * 60 + endMinutes;
+        
+        // Convert to percentages (24 hours = 1440 minutes = 100%)
+        const startPercent = (startTotalMinutes / 1440) * 100;
+        const endPercent = (endTotalMinutes / 1440) * 100;
         const heightPercent = endPercent - startPercent;
         
         console.log('Event calculation:', {
           title: event.title,
-          startTime: `${hours}:${minutes}`,
-          endTime: `${endHours}:${endMinutes}`,
+          startTime: event.startTime,
+          endTime: event.endTime,
+          startTotalMinutes,
+          endTotalMinutes,
           startPercent,
           endPercent,
           heightPercent
