@@ -35,6 +35,11 @@ const CourseList = () => {
     }
   };
 
+  const handleCourseClick = (courseId: string) => {
+    console.log("Navigating to course:", courseId);
+    navigate(`/course/${courseId}`);
+  };
+
   return (
     <div className="container mx-auto p-8">
       <div className="mb-6">
@@ -64,7 +69,11 @@ const CourseList = () => {
 
       <div className="grid gap-4">
         {events.map((event) => (
-          <Card key={event.id} className="p-4">
+          <Card 
+            key={event.id} 
+            className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => handleCourseClick(event.id)}
+          >
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-semibold">{event.title}</h3>
