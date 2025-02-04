@@ -4,8 +4,14 @@ import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useEvents } from "@/hooks/use-events";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-const STORAGE_KEY_PREFIX = 'note_';
+const LINES_PER_PAGE = 20; // This matches our line-height of 24px in a 480px height container
+
+interface PageSpread {
+  left: string;
+  right: string;
+}
 
 const NoteEditor = () => {
   const { courseId } = useParams();
@@ -15,42 +21,73 @@ const NoteEditor = () => {
   const courseTitle = location.state?.courseTitle || 
     events.find(event => event.id === courseId)?.title || 
     "Sans titre";
-  const [leftContent, setLeftContent] = useState("");
-  const [rightContent, setRightContent] = useState("");
+  
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [pages, setPages] = useState<PageSpread[]>([{ left: "", right: "" }]);
 
   useEffect(() => {
     console.log('Loading note for course:', courseId);
     if (courseId) {
-      const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${courseId}`);
+      const stored = localStorage.getItem(`note_${courseId}`);
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          if (typeof parsed === 'object' && parsed !== null) {
-            setLeftContent(parsed.left || "");
-            setRightContent(parsed.right || "");
-          } else if (typeof parsed === 'string') {
-            setLeftContent(parsed);
+          if (Array.isArray(parsed)) {
+            setPages(parsed);
+          } else if (typeof parsed === 'object' && parsed !== null) {
+            setPages([{ left: parsed.left || "", right: parsed.right || "" }]);
           }
         } catch {
-          setLeftContent(stored);
+          setPages([{ left: "", right: "" }]);
         }
       }
     }
   }, [courseId]);
 
+  const savePages = (newPages: PageSpread[]) => {
+    if (courseId) {
+      localStorage.setItem(`note_${courseId}`, JSON.stringify(newPages));
+    }
+  };
+
   const handleContentChange = (side: 'left' | 'right', value: string) => {
-    if (side === 'left') {
-      setLeftContent(value);
+    const lines = value.split('\n');
+    const updatedPages = [...pages];
+    
+    if (lines.length > LINES_PER_PAGE) {
+      // If we're on the left page and exceeded the line limit
+      if (side === 'left') {
+        const leftContent = lines.slice(0, LINES_PER_PAGE).join('\n');
+        const overflow = lines.slice(LINES_PER_PAGE).join('\n');
+        
+        updatedPages[currentPageIndex].left = leftContent;
+        updatedPages[currentPageIndex].right = overflow + (updatedPages[currentPageIndex].right || '');
+      }
+      // If we're on the right page and exceeded the line limit
+      else if (side === 'right') {
+        const rightContent = lines.slice(0, LINES_PER_PAGE).join('\n');
+        const overflow = lines.slice(LINES_PER_PAGE).join('\n');
+        
+        updatedPages[currentPageIndex].right = rightContent;
+        
+        // Create new page spread if needed
+        if (!updatedPages[currentPageIndex + 1]) {
+          updatedPages.push({ left: "", right: "" });
+        }
+        updatedPages[currentPageIndex + 1].left = overflow + (updatedPages[currentPageIndex + 1].left || '');
+        setCurrentPageIndex(currentPageIndex + 1);
+      }
     } else {
-      setRightContent(value);
+      updatedPages[currentPageIndex][side] = value;
     }
     
-    if (courseId) {
-      const content = {
-        left: side === 'left' ? value : leftContent,
-        right: side === 'right' ? value : rightContent
-      };
-      localStorage.setItem(`${STORAGE_KEY_PREFIX}${courseId}`, JSON.stringify(content));
+    setPages(updatedPages);
+    savePages(updatedPages);
+  };
+
+  const handlePageChange = (index: number) => {
+    if (index >= 0 && index < pages.length) {
+      setCurrentPageIndex(index);
     }
   };
 
@@ -68,21 +105,35 @@ const NoteEditor = () => {
 
       <h1 className="text-4xl font-bold mb-8">{courseTitle}</h1>
 
-      <div className="notebook-container relative">
-        <div className="notebook-spine" />
-        <Textarea
-          value={leftContent}
-          onChange={(e) => handleContentChange('left', e.target.value)}
-          className="notebook-paper min-h-[calc(100vh-250px)]"
-          placeholder="Prenez vos notes ici..."
-        />
-        <Textarea
-          value={rightContent}
-          onChange={(e) => handleContentChange('right', e.target.value)}
-          className="notebook-paper-right min-h-[calc(100vh-250px)]"
-          placeholder="Continuez vos notes ici..."
-        />
+      <div className="flex items-center gap-2 mb-4">
+        {pages.map((_, index) => (
+          <Button
+            key={index}
+            variant={index === currentPageIndex ? "default" : "outline"}
+            onClick={() => handlePageChange(index)}
+          >
+            {index + 1}
+          </Button>
+        ))}
       </div>
+
+      <ScrollArea className="h-[calc(100vh-300px)]">
+        <div className="notebook-container relative">
+          <div className="notebook-spine" />
+          <Textarea
+            value={pages[currentPageIndex].left}
+            onChange={(e) => handleContentChange('left', e.target.value)}
+            className="notebook-paper min-h-[480px] max-h-[480px] overflow-hidden"
+            placeholder="Prenez vos notes ici..."
+          />
+          <Textarea
+            value={pages[currentPageIndex].right}
+            onChange={(e) => handleContentChange('right', e.target.value)}
+            className="notebook-paper-right min-h-[480px] max-h-[480px] overflow-hidden"
+            placeholder="Continuez vos notes ici..."
+          />
+        </div>
+      </ScrollArea>
     </div>
   );
 };
