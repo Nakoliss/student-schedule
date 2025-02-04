@@ -25,15 +25,19 @@ export const Index = () => {
       eventEndDate.setHours(endHours, endMinutes, 0);
       return now >= eventDate && now <= eventEndDate;
     });
-    return currentEvent?.id;
+    return currentEvent;
   };
 
   const handleNotesClick = () => {
-    const currentCourseId = getCurrentCourse();
-    if (currentCourseId) {
-      navigate(`/course/${currentCourseId}/notes`);
+    const currentCourse = getCurrentCourse();
+    if (currentCourse) {
+      console.log("Navigating to current course notes:", currentCourse);
+      const defaultNoteId = `note-${currentCourse.id}`;
+      navigate(`/course/${currentCourse.id}/notes/${defaultNoteId}`, {
+        state: { courseTitle: currentCourse.title }
+      });
     } else {
-      // If no current course, navigate to courses list
+      console.log("No current course, navigating to courses list");
       navigate('/courses_notes');
     }
   };
