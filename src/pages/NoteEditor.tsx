@@ -25,6 +25,13 @@ const NoteEditor = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [pages, setPages] = useState<PageSpread[]>([{ left: "", right: "" }]);
 
+  // Reset localStorage for this note
+  useEffect(() => {
+    if (courseId) {
+      localStorage.setItem(`note_${courseId}`, JSON.stringify([{ left: "", right: "" }]));
+    }
+  }, [courseId]);
+
   useEffect(() => {
     console.log('Loading note for course:', courseId);
     if (courseId) {
