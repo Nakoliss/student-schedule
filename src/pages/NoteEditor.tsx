@@ -22,37 +22,45 @@ const NoteEditor = () => {
   const [pages, setPages] = useState<PageSpread[]>([{ left: "", right: "" }]);
 
   useEffect(() => {
+    console.log("Loading note for courseId:", courseId);
     if (courseId) {
       const loadedPages = loadNote(courseId);
+      console.log("Loaded pages:", loadedPages);
       setPages(loadedPages);
     }
   }, [courseId]);
 
   const handleContentChange = (side: 'left' | 'right', value: string) => {
-    const { updatedPages, newPageIndex, focusSide } = handlePageOverflow(
+    console.log(`Handling content change for ${side} side:`, value);
+    const updatedPages = [...pages];
+    updatedPages[currentPageIndex] = {
+      ...updatedPages[currentPageIndex],
+      [side]: value
+    };
+
+    const result = handlePageOverflow(
       value,
       side,
       pages,
       currentPageIndex
     );
 
-    setPages(updatedPages);
+    setPages(result.updatedPages);
     if (courseId) {
-      saveNote(courseId, updatedPages);
+      saveNote(courseId, result.updatedPages);
     }
 
-    if (newPageIndex !== undefined) {
-      setCurrentPageIndex(newPageIndex);
+    if (result.newPageIndex !== undefined) {
+      setCurrentPageIndex(result.newPageIndex);
     }
 
-    if (focusSide) {
+    if (result.focusSide) {
       setTimeout(() => {
-        const selector = focusSide === 'left' ? '.notebook-paper' : '.notebook-paper-right';
+        const selector = result.focusSide === 'left' ? '.notebook-paper' : '.notebook-paper-right';
         const textarea = document.querySelector(selector) as HTMLTextAreaElement;
         if (textarea) {
           textarea.focus();
-          const overflow = value.split('\n').slice(20).join('\n');
-          textarea.setSelectionRange(overflow.length, overflow.length);
+          textarea.setSelectionRange(value.length, value.length);
         }
       }, 0);
     }
@@ -117,7 +125,7 @@ const NoteEditor = () => {
         <div className="notebook-container relative">
           <div className="notebook-spine" />
           <NotebookPage
-            content={pages[currentPageIndex].left}
+            content={pages[currentPageIndex]?.left || ""}
             onChange={(value) => handleContentChange('left', value)}
             onKeyDown={(e) => handleKeyDown('left', e)}
             side="left"
@@ -125,7 +133,7 @@ const NoteEditor = () => {
             placeholder="Prenez vos notes ici..."
           />
           <NotebookPage
-            content={pages[currentPageIndex].right}
+            content={pages[currentPageIndex]?.right || ""}
             onChange={(value) => handleContentChange('right', value)}
             onKeyDown={(e) => handleKeyDown('right', e)}
             side="right"
