@@ -35,25 +35,24 @@ export const handlePageOverflow = (
   const lines = value.split('\n');
   console.log('Number of lines:', lines.length);
 
-  // If we're at exactly LINES_PER_PAGE lines and the last line isn't empty,
-  // or if we're over LINES_PER_PAGE, we need to handle overflow
-  if ((lines.length === LINES_PER_PAGE && lines[lines.length - 1].trim() !== '') || 
-      lines.length > LINES_PER_PAGE) {
+  // Check if we're trying to add content beyond line 20
+  if (lines.length > LINES_PER_PAGE) {
+    console.log('Overflow detected - more than 20 lines');
     
-    // Keep only the first LINES_PER_PAGE lines for current page
+    // Keep only the first 20 lines for current page
     const contentLines = lines.slice(0, LINES_PER_PAGE);
     const overflowLines = lines.slice(LINES_PER_PAGE);
     
     const content = contentLines.join('\n');
     const overflow = overflowLines.join('\n');
     
-    console.log('Overflow detected. Content:', content);
-    console.log('Overflow:', overflow);
+    console.log('Content for current page:', content);
+    console.log('Overflow content:', overflow);
     
     const updatedPages = [...pages];
 
     if (side === 'left') {
-      console.log('Left page overflow, moving to right page');
+      console.log('Moving overflow from left to right page');
       updatedPages[currentPageIndex] = {
         ...updatedPages[currentPageIndex],
         left: content,
@@ -64,7 +63,7 @@ export const handlePageOverflow = (
         focusSide: 'right'
       };
     } else {
-      console.log('Right page overflow, moving to next spread');
+      console.log('Moving overflow to next spread');
       updatedPages[currentPageIndex] = {
         ...updatedPages[currentPageIndex],
         right: content
@@ -80,6 +79,48 @@ export const handlePageOverflow = (
       };
       
       return { 
+        updatedPages,
+        newPageIndex: currentPageIndex + 1,
+        focusSide: 'left'
+      };
+    }
+  }
+
+  // If we're exactly at line 20 and trying to add more content
+  if (lines.length === LINES_PER_PAGE && value.length > lines.join('\n').length) {
+    console.log('Overflow detected - at line 20 with more content');
+    const updatedPages = [...pages];
+
+    if (side === 'left') {
+      // Move to right page
+      const nextContent = value.substring(lines.join('\n').length);
+      updatedPages[currentPageIndex] = {
+        ...updatedPages[currentPageIndex],
+        left: lines.join('\n'),
+        right: nextContent.startsWith('\n') ? nextContent.substring(1) : nextContent
+      };
+      return {
+        updatedPages,
+        focusSide: 'right'
+      };
+    } else {
+      // Move to next spread
+      const nextContent = value.substring(lines.join('\n').length);
+      updatedPages[currentPageIndex] = {
+        ...updatedPages[currentPageIndex],
+        right: lines.join('\n')
+      };
+      
+      if (!updatedPages[currentPageIndex + 1]) {
+        updatedPages.push({ left: "", right: "" });
+      }
+      
+      updatedPages[currentPageIndex + 1] = {
+        ...updatedPages[currentPageIndex + 1],
+        left: nextContent.startsWith('\n') ? nextContent.substring(1) : nextContent
+      };
+      
+      return {
         updatedPages,
         newPageIndex: currentPageIndex + 1,
         focusSide: 'left'
