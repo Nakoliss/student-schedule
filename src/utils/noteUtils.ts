@@ -35,6 +35,7 @@ export const handlePageOverflow = (
   const lines = value.split('\n');
   console.log('Number of lines:', lines.length);
 
+  // If content fits on current page, just update it
   if (lines.length <= LINES_PER_PAGE) {
     const updatedPages = [...pages];
     updatedPages[currentPageIndex] = {
@@ -44,6 +45,7 @@ export const handlePageOverflow = (
     return { updatedPages };
   }
 
+  // Split content into current page and overflow
   const contentLines = lines.slice(0, LINES_PER_PAGE);
   const overflowLines = lines.slice(LINES_PER_PAGE);
   
@@ -54,9 +56,11 @@ export const handlePageOverflow = (
 
   if (side === 'left') {
     console.log('Left page overflow, moving to right page');
+    // Update left page with content that fits
     updatedPages[currentPageIndex] = {
       ...updatedPages[currentPageIndex],
       left: content,
+      // Move overflow to right page
       right: overflow + (updatedPages[currentPageIndex].right || '')
     };
     return { 
@@ -65,15 +69,18 @@ export const handlePageOverflow = (
     };
   } else {
     console.log('Right page overflow, moving to next spread');
+    // Update right page with content that fits
     updatedPages[currentPageIndex] = {
       ...updatedPages[currentPageIndex],
       right: content
     };
     
+    // Create new page if needed
     if (!updatedPages[currentPageIndex + 1]) {
       updatedPages.push({ left: "", right: "" });
     }
     
+    // Move overflow to next page's left side
     updatedPages[currentPageIndex + 1] = {
       ...updatedPages[currentPageIndex + 1],
       left: overflow

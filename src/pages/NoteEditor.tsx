@@ -33,48 +33,44 @@ const NoteEditor = () => {
   const handleContentChange = (side: 'left' | 'right', value: string) => {
     console.log(`Handling content change for ${side} side:`, value);
     
-    setPages(prevPages => {
-      const updatedPages = [...prevPages];
-      updatedPages[currentPageIndex] = {
-        ...updatedPages[currentPageIndex],
-        [side]: value
-      };
+    const result = handlePageOverflow(
+      value,
+      side,
+      pages,
+      currentPageIndex
+    );
 
-      const result = handlePageOverflow(
-        value,
-        side,
-        updatedPages,
-        currentPageIndex
-      );
+    console.log("Page overflow result:", result);
 
-      if (courseId) {
-        saveNote(courseId, result.updatedPages);
-      }
+    setPages(result.updatedPages);
+    
+    if (courseId) {
+      saveNote(courseId, result.updatedPages);
+    }
 
-      if (result.newPageIndex !== undefined) {
-        setCurrentPageIndex(result.newPageIndex);
-      }
+    if (result.newPageIndex !== undefined) {
+      console.log("Navigating to new page index:", result.newPageIndex);
+      setCurrentPageIndex(result.newPageIndex);
+    }
 
-      if (result.focusSide) {
-        setTimeout(() => {
-          const selector = result.focusSide === 'left' ? '.notebook-paper' : '.notebook-paper-right';
-          const textarea = document.querySelector(selector) as HTMLTextAreaElement;
-          if (textarea) {
-            textarea.focus();
-            textarea.setSelectionRange(value.length, value.length);
-          }
-        }, 0);
-      }
-
-      return result.updatedPages;
-    });
+    if (result.focusSide) {
+      console.log("Focusing on side:", result.focusSide);
+      setTimeout(() => {
+        const selector = result.focusSide === 'left' ? '.notebook-paper' : '.notebook-paper-right';
+        const textarea = document.querySelector(selector) as HTMLTextAreaElement;
+        if (textarea) {
+          textarea.focus();
+          textarea.setSelectionRange(0, 0);
+        }
+      }, 0);
+    }
   };
 
   const handleKeyDown = (side: 'left' | 'right', e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const textarea = e.currentTarget;
     const lines = textarea.value.split('\n');
     
-    if (e.key === 'Enter' && lines.length === 20) {
+    if (e.key === 'Enter' && lines.length >= 20) {
       e.preventDefault();
       
       if (side === 'left') {
@@ -84,17 +80,15 @@ const NoteEditor = () => {
           rightTextarea.setSelectionRange(0, 0);
         }
       } else {
-        setPages(prevPages => {
-          const updatedPages = [...prevPages];
-          if (!updatedPages[currentPageIndex + 1]) {
-            updatedPages.push({ left: "", right: "" });
-          }
-          if (courseId) {
-            saveNote(courseId, updatedPages);
-          }
-          return updatedPages;
-        });
-        setCurrentPageIndex(currentPageIndex + 1);
+        const newPages = [...pages];
+        if (!newPages[currentPageIndex + 1]) {
+          newPages.push({ left: "", right: "" });
+        }
+        setPages(newPages);
+        if (courseId) {
+          saveNote(courseId, newPages);
+        }
+        setCurrentPageIndex(prev => prev + 1);
         
         setTimeout(() => {
           const leftTextarea = document.querySelector('.notebook-paper') as HTMLTextAreaElement;
