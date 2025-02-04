@@ -60,8 +60,10 @@ export const handlePageOverflow = (
     updatedPages[currentPageIndex] = {
       ...updatedPages[currentPageIndex],
       left: content,
-      // Move overflow to right page
-      right: overflow + (updatedPages[currentPageIndex].right || '')
+      // Move overflow to right page, but preserve any existing content
+      right: updatedPages[currentPageIndex].right 
+        ? updatedPages[currentPageIndex].right + '\n' + overflow
+        : overflow
     };
     return { 
       updatedPages,
@@ -80,10 +82,12 @@ export const handlePageOverflow = (
       updatedPages.push({ left: "", right: "" });
     }
     
-    // Move overflow to next page's left side
+    // Move overflow to next page's left side, but preserve any existing content
     updatedPages[currentPageIndex + 1] = {
       ...updatedPages[currentPageIndex + 1],
-      left: overflow
+      left: updatedPages[currentPageIndex + 1].left
+        ? updatedPages[currentPageIndex + 1].left + '\n' + overflow
+        : overflow
     };
     
     return { 
