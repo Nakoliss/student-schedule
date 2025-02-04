@@ -19,12 +19,12 @@ export const NotebookPage = ({
   placeholder
 }: NotebookPageProps) => {
   useEffect(() => {
-    console.log(`${side} page content length:`, content.length);
+    console.log(`${side} page content length:`, content?.length || 0);
   }, [content, side]);
 
   return (
     <Textarea
-      value={content}
+      value={content || ""}
       onChange={(e) => onChange(e.target.value)}
       onKeyDown={onKeyDown}
       className={className}
