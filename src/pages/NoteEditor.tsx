@@ -54,36 +54,94 @@ const NoteEditor = () => {
     const lines = value.split('\n');
     const updatedPages = [...pages];
     
-    // If we exceed the line limit
-    if (lines.length > LINES_PER_PAGE) {
-      // If we're on the left page
-      if (side === 'left') {
-        const leftContent = lines.slice(0, LINES_PER_PAGE).join('\n');
-        const overflow = lines.slice(LINES_PER_PAGE).join('\n');
-        
-        updatedPages[currentPageIndex].left = leftContent;
-        updatedPages[currentPageIndex].right = overflow + (updatedPages[currentPageIndex].right || '');
+    // If we're on the left page and exceed the line limit
+    if (side === 'left' && lines.length > LINES_PER_PAGE) {
+      const leftContent = lines.slice(0, LINES_PER_PAGE).join('\n');
+      const overflow = lines.slice(LINES_PER_PAGE).join('\n');
+      
+      updatedPages[currentPageIndex].left = leftContent;
+      updatedPages[currentPageIndex].right = overflow + (updatedPages[currentPageIndex].right || '');
+      
+      setPages(updatedPages);
+      savePages(updatedPages);
+      
+      // Focus the right textarea
+      const rightTextarea = document.querySelector('.notebook-paper-right') as HTMLTextAreaElement;
+      if (rightTextarea) {
+        rightTextarea.focus();
+        rightTextarea.setSelectionRange(0, 0);
       }
-      // If we're on the right page
-      else if (side === 'right') {
-        const rightContent = lines.slice(0, LINES_PER_PAGE).join('\n');
-        const overflow = lines.slice(LINES_PER_PAGE).join('\n');
-        
-        updatedPages[currentPageIndex].right = rightContent;
-        
-        // Create new page spread if needed
+      return;
+    }
+    
+    // If we're on the right page and exceed the line limit
+    if (side === 'right' && lines.length > LINES_PER_PAGE) {
+      const rightContent = lines.slice(0, LINES_PER_PAGE).join('\n');
+      const overflow = lines.slice(LINES_PER_PAGE).join('\n');
+      
+      updatedPages[currentPageIndex].right = rightContent;
+      
+      // Create new page spread if needed
+      if (!updatedPages[currentPageIndex + 1]) {
+        updatedPages.push({ left: "", right: "" });
+      }
+      updatedPages[currentPageIndex + 1].left = overflow;
+      
+      setPages(updatedPages);
+      savePages(updatedPages);
+      setCurrentPageIndex(currentPageIndex + 1);
+      
+      // Focus the left textarea of the new spread
+      setTimeout(() => {
+        const leftTextarea = document.querySelector('.notebook-paper') as HTMLTextAreaElement;
+        if (leftTextarea) {
+          leftTextarea.focus();
+          leftTextarea.setSelectionRange(0, 0);
+        }
+      }, 0);
+      return;
+    }
+    
+    // Normal content update when within line limits
+    updatedPages[currentPageIndex][side] = value;
+    setPages(updatedPages);
+    savePages(updatedPages);
+  };
+
+  const handleKeyDown = (side: 'left' | 'right', e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const textarea = e.currentTarget;
+    const lines = textarea.value.split('\n');
+    
+    // If Enter is pressed on the last line
+    if (e.key === 'Enter' && lines.length === LINES_PER_PAGE) {
+      e.preventDefault();
+      
+      if (side === 'left') {
+        // Move to right page
+        const rightTextarea = document.querySelector('.notebook-paper-right') as HTMLTextAreaElement;
+        if (rightTextarea) {
+          rightTextarea.focus();
+          rightTextarea.setSelectionRange(0, 0);
+        }
+      } else {
+        // Create new spread and move to left page
+        const updatedPages = [...pages];
         if (!updatedPages[currentPageIndex + 1]) {
           updatedPages.push({ left: "", right: "" });
         }
-        updatedPages[currentPageIndex + 1].left = overflow;
+        setPages(updatedPages);
+        savePages(updatedPages);
         setCurrentPageIndex(currentPageIndex + 1);
+        
+        setTimeout(() => {
+          const leftTextarea = document.querySelector('.notebook-paper') as HTMLTextAreaElement;
+          if (leftTextarea) {
+            leftTextarea.focus();
+            leftTextarea.setSelectionRange(0, 0);
+          }
+        }, 0);
       }
-    } else {
-      updatedPages[currentPageIndex][side] = value;
     }
-    
-    setPages(updatedPages);
-    savePages(updatedPages);
   };
 
   const handlePageChange = (index: number) => {
@@ -124,6 +182,7 @@ const NoteEditor = () => {
           <Textarea
             value={pages[currentPageIndex].left}
             onChange={(e) => handleContentChange('left', e.target.value)}
+            onKeyDown={(e) => handleKeyDown('left', e)}
             className="notebook-paper min-h-[480px] max-h-[480px] overflow-hidden"
             placeholder="Prenez vos notes ici..."
             rows={LINES_PER_PAGE}
@@ -131,6 +190,7 @@ const NoteEditor = () => {
           <Textarea
             value={pages[currentPageIndex].right}
             onChange={(e) => handleContentChange('right', e.target.value)}
+            onKeyDown={(e) => handleKeyDown('right', e)}
             className="notebook-paper-right min-h-[480px] max-h-[480px] overflow-hidden"
             placeholder="Continuez vos notes ici..."
             rows={LINES_PER_PAGE}
