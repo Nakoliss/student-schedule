@@ -58,11 +58,13 @@ const NoteEditor = () => {
   };
 
   const handleContentChange = (side: 'left' | 'right', value: string) => {
+    console.log('Content changed:', side, value);
     const lines = value.split('\n');
     const updatedPages = [...pages];
     
     // If we're on the left page and exceed the line limit
     if (side === 'left' && lines.length > LINES_PER_PAGE) {
+      console.log('Left page overflow detected');
       const leftContent = lines.slice(0, LINES_PER_PAGE).join('\n');
       const overflow = lines.slice(LINES_PER_PAGE).join('\n');
       
@@ -73,16 +75,19 @@ const NoteEditor = () => {
       savePages(updatedPages);
       
       // Focus the right textarea
-      const rightTextarea = document.querySelector('.notebook-paper-right') as HTMLTextAreaElement;
-      if (rightTextarea) {
-        rightTextarea.focus();
-        rightTextarea.setSelectionRange(0, 0);
-      }
+      setTimeout(() => {
+        const rightTextarea = document.querySelector('.notebook-paper-right') as HTMLTextAreaElement;
+        if (rightTextarea) {
+          rightTextarea.focus();
+          rightTextarea.setSelectionRange(0, 0);
+        }
+      }, 0);
       return;
     }
     
     // If we're on the right page and exceed the line limit
     if (side === 'right' && lines.length > LINES_PER_PAGE) {
+      console.log('Right page overflow detected');
       const rightContent = lines.slice(0, LINES_PER_PAGE).join('\n');
       const overflow = lines.slice(LINES_PER_PAGE).join('\n');
       
@@ -92,7 +97,7 @@ const NoteEditor = () => {
       if (!updatedPages[currentPageIndex + 1]) {
         updatedPages.push({ left: "", right: "" });
       }
-      updatedPages[currentPageIndex + 1].left = overflow;
+      updatedPages[currentPageIndex + 1].left = overflow + (updatedPages[currentPageIndex + 1].left || '');
       
       setPages(updatedPages);
       savePages(updatedPages);
