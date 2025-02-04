@@ -1,17 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useEvents } from "@/hooks/use-events";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-const LINES_PER_PAGE = 20;
-
-interface PageSpread {
-  left: string;
-  right: string;
-}
+import { NotebookPage } from "@/components/notes/NotebookPage";
+import { PageNavigation } from "@/components/notes/PageNavigation";
+import { handlePageOverflow, loadNote, saveNote } from "@/utils/noteUtils";
+import type { PageSpread } from "@/types/notes";
 
 const NoteEditor = () => {
   const { courseId } = useParams();
@@ -27,111 +23,63 @@ const NoteEditor = () => {
 
   useEffect(() => {
     if (courseId) {
-      const stored = localStorage.getItem(`note_${courseId}`);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) {
-            setPages(parsed);
-          } else if (typeof parsed === 'object' && parsed !== null) {
-            setPages([{ left: parsed.left || "", right: parsed.right || "" }]);
-          }
-        } catch {
-          setPages([{ left: "", right: "" }]);
-        }
-      }
+      const loadedPages = loadNote(courseId);
+      setPages(loadedPages);
     }
   }, [courseId]);
 
-  const savePages = (newPages: PageSpread[]) => {
-    if (courseId) {
-      localStorage.setItem(`note_${courseId}`, JSON.stringify(newPages));
-    }
-  };
-
   const handleContentChange = (side: 'left' | 'right', value: string) => {
-    const lines = value.split('\n');
-    console.log('Number of lines:', lines.length);
-    
-    if (lines.length > LINES_PER_PAGE) {
-      const updatedPages = [...pages];
-      const contentLines = lines.slice(0, LINES_PER_PAGE);
-      const overflowLines = lines.slice(LINES_PER_PAGE);
-      
-      const content = contentLines.join('\n');
-      const overflow = overflowLines.join('\n');
-      
-      if (side === 'left') {
-        console.log('Left page overflow, moving to right page');
-        updatedPages[currentPageIndex].left = content;
-        updatedPages[currentPageIndex].right = overflow + (updatedPages[currentPageIndex].right || '');
-        
-        setPages(updatedPages);
-        savePages(updatedPages);
-        
-        // Focus right textarea
-        setTimeout(() => {
-          const rightTextarea = document.querySelector('.notebook-paper-right') as HTMLTextAreaElement;
-          if (rightTextarea) {
-            rightTextarea.focus();
-            rightTextarea.setSelectionRange(overflow.length, overflow.length);
-          }
-        }, 0);
-      } else {
-        console.log('Right page overflow, moving to next spread');
-        updatedPages[currentPageIndex].right = content;
-        
-        if (!updatedPages[currentPageIndex + 1]) {
-          updatedPages.push({ left: "", right: "" });
-        }
-        updatedPages[currentPageIndex + 1].left = overflow + (updatedPages[currentPageIndex + 1].left || '');
-        
-        setPages(updatedPages);
-        savePages(updatedPages);
-        setCurrentPageIndex(currentPageIndex + 1);
-        
-        // Focus next spread's left textarea
-        setTimeout(() => {
-          const leftTextarea = document.querySelector('.notebook-paper') as HTMLTextAreaElement;
-          if (leftTextarea) {
-            leftTextarea.focus();
-            leftTextarea.setSelectionRange(overflow.length, overflow.length);
-          }
-        }, 0);
-      }
-      return;
-    }
-    
-    // Normal content update when within line limits
-    const updatedPages = [...pages];
-    updatedPages[currentPageIndex][side] = value;
+    const { updatedPages, newPageIndex, focusSide } = handlePageOverflow(
+      value,
+      side,
+      pages,
+      currentPageIndex
+    );
+
     setPages(updatedPages);
-    savePages(updatedPages);
+    if (courseId) {
+      saveNote(courseId, updatedPages);
+    }
+
+    if (newPageIndex !== undefined) {
+      setCurrentPageIndex(newPageIndex);
+    }
+
+    if (focusSide) {
+      setTimeout(() => {
+        const selector = focusSide === 'left' ? '.notebook-paper' : '.notebook-paper-right';
+        const textarea = document.querySelector(selector) as HTMLTextAreaElement;
+        if (textarea) {
+          textarea.focus();
+          const overflow = value.split('\n').slice(20).join('\n');
+          textarea.setSelectionRange(overflow.length, overflow.length);
+        }
+      }, 0);
+    }
   };
 
   const handleKeyDown = (side: 'left' | 'right', e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const textarea = e.currentTarget;
     const lines = textarea.value.split('\n');
     
-    // If Enter is pressed on the last line
-    if (e.key === 'Enter' && lines.length === LINES_PER_PAGE) {
+    if (e.key === 'Enter' && lines.length === 20) {
       e.preventDefault();
       
       if (side === 'left') {
-        // Move to right page
         const rightTextarea = document.querySelector('.notebook-paper-right') as HTMLTextAreaElement;
         if (rightTextarea) {
           rightTextarea.focus();
           rightTextarea.setSelectionRange(0, 0);
         }
       } else {
-        // Create new spread and move to left page
         const updatedPages = [...pages];
         if (!updatedPages[currentPageIndex + 1]) {
           updatedPages.push({ left: "", right: "" });
         }
         setPages(updatedPages);
-        savePages(updatedPages);
+        if (courseId) {
+          saveNote(courseId, updatedPages);
+        }
         setCurrentPageIndex(currentPageIndex + 1);
         
         setTimeout(() => {
@@ -142,12 +90,6 @@ const NoteEditor = () => {
           }
         }, 0);
       }
-    }
-  };
-
-  const handlePageChange = (index: number) => {
-    if (index >= 0 && index < pages.length) {
-      setCurrentPageIndex(index);
     }
   };
 
@@ -165,36 +107,30 @@ const NoteEditor = () => {
 
       <h1 className="text-4xl font-bold mb-8">{courseTitle}</h1>
 
-      <div className="flex items-center gap-2 mb-4">
-        {pages.map((_, index) => (
-          <Button
-            key={index}
-            variant={index === currentPageIndex ? "default" : "outline"}
-            onClick={() => handlePageChange(index)}
-          >
-            {index + 1}
-          </Button>
-        ))}
-      </div>
+      <PageNavigation
+        currentPage={currentPageIndex}
+        totalPages={pages.length}
+        onPageChange={setCurrentPageIndex}
+      />
 
       <ScrollArea className="h-[calc(100vh-300px)]">
         <div className="notebook-container relative">
           <div className="notebook-spine" />
-          <Textarea
-            value={pages[currentPageIndex].left}
-            onChange={(e) => handleContentChange('left', e.target.value)}
+          <NotebookPage
+            content={pages[currentPageIndex].left}
+            onChange={(value) => handleContentChange('left', value)}
             onKeyDown={(e) => handleKeyDown('left', e)}
+            side="left"
             className="notebook-paper min-h-[480px] max-h-[480px] overflow-hidden"
             placeholder="Prenez vos notes ici..."
-            rows={LINES_PER_PAGE}
           />
-          <Textarea
-            value={pages[currentPageIndex].right}
-            onChange={(e) => handleContentChange('right', e.target.value)}
+          <NotebookPage
+            content={pages[currentPageIndex].right}
+            onChange={(value) => handleContentChange('right', value)}
             onKeyDown={(e) => handleKeyDown('right', e)}
+            side="right"
             className="notebook-paper-right min-h-[480px] max-h-[480px] overflow-hidden"
             placeholder="Continuez vos notes ici..."
-            rows={LINES_PER_PAGE}
           />
         </div>
       </ScrollArea>
