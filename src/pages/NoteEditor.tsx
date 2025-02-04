@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useEvents } from "@/hooks/use-events";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const LINES_PER_PAGE = 20; // This matches our line-height of 24px in a 480px height container
+const LINES_PER_PAGE = 20;
 
 interface PageSpread {
   left: string;
@@ -54,8 +54,9 @@ const NoteEditor = () => {
     const lines = value.split('\n');
     const updatedPages = [...pages];
     
+    // If we exceed the line limit
     if (lines.length > LINES_PER_PAGE) {
-      // If we're on the left page and exceeded the line limit
+      // If we're on the left page
       if (side === 'left') {
         const leftContent = lines.slice(0, LINES_PER_PAGE).join('\n');
         const overflow = lines.slice(LINES_PER_PAGE).join('\n');
@@ -63,7 +64,7 @@ const NoteEditor = () => {
         updatedPages[currentPageIndex].left = leftContent;
         updatedPages[currentPageIndex].right = overflow + (updatedPages[currentPageIndex].right || '');
       }
-      // If we're on the right page and exceeded the line limit
+      // If we're on the right page
       else if (side === 'right') {
         const rightContent = lines.slice(0, LINES_PER_PAGE).join('\n');
         const overflow = lines.slice(LINES_PER_PAGE).join('\n');
@@ -74,7 +75,7 @@ const NoteEditor = () => {
         if (!updatedPages[currentPageIndex + 1]) {
           updatedPages.push({ left: "", right: "" });
         }
-        updatedPages[currentPageIndex + 1].left = overflow + (updatedPages[currentPageIndex + 1].left || '');
+        updatedPages[currentPageIndex + 1].left = overflow;
         setCurrentPageIndex(currentPageIndex + 1);
       }
     } else {
@@ -125,12 +126,14 @@ const NoteEditor = () => {
             onChange={(e) => handleContentChange('left', e.target.value)}
             className="notebook-paper min-h-[480px] max-h-[480px] overflow-hidden"
             placeholder="Prenez vos notes ici..."
+            rows={LINES_PER_PAGE}
           />
           <Textarea
             value={pages[currentPageIndex].right}
             onChange={(e) => handleContentChange('right', e.target.value)}
             className="notebook-paper-right min-h-[480px] max-h-[480px] overflow-hidden"
             placeholder="Continuez vos notes ici..."
+            rows={LINES_PER_PAGE}
           />
         </div>
       </ScrollArea>
