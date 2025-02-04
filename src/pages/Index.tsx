@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "@/hooks/use-events";
 
-const Index = () => {
+export const Index = () => {
   const isMobile = useIsMobile();
   const [showSidebar, setShowSidebar] = useState(!isMobile);
   const navigate = useNavigate();
