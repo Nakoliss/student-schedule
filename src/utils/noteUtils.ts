@@ -36,7 +36,12 @@ export const handlePageOverflow = (
   console.log('Number of lines:', lines.length);
 
   if (lines.length <= LINES_PER_PAGE) {
-    return { updatedPages: pages };
+    const updatedPages = [...pages];
+    updatedPages[currentPageIndex] = {
+      ...updatedPages[currentPageIndex],
+      [side]: value
+    };
+    return { updatedPages };
   }
 
   const contentLines = lines.slice(0, LINES_PER_PAGE);
@@ -49,17 +54,30 @@ export const handlePageOverflow = (
 
   if (side === 'left') {
     console.log('Left page overflow, moving to right page');
-    updatedPages[currentPageIndex].left = content;
-    updatedPages[currentPageIndex].right = overflow + (updatedPages[currentPageIndex].right || '');
-    return { updatedPages, focusSide: 'right' };
+    updatedPages[currentPageIndex] = {
+      ...updatedPages[currentPageIndex],
+      left: content,
+      right: overflow + (updatedPages[currentPageIndex].right || '')
+    };
+    return { 
+      updatedPages,
+      focusSide: 'right'
+    };
   } else {
     console.log('Right page overflow, moving to next spread');
-    updatedPages[currentPageIndex].right = content;
+    updatedPages[currentPageIndex] = {
+      ...updatedPages[currentPageIndex],
+      right: content
+    };
     
     if (!updatedPages[currentPageIndex + 1]) {
       updatedPages.push({ left: "", right: "" });
     }
-    updatedPages[currentPageIndex + 1].left = overflow + (updatedPages[currentPageIndex + 1].left || '');
+    
+    updatedPages[currentPageIndex + 1] = {
+      ...updatedPages[currentPageIndex + 1],
+      left: overflow
+    };
     
     return { 
       updatedPages,
