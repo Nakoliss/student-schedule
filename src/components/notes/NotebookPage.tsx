@@ -19,13 +19,18 @@ export const NotebookPage = ({
   placeholder
 }: NotebookPageProps) => {
   useEffect(() => {
-    console.log(`${side} page content length:`, content?.length || 0);
+    console.log(`${side} page content:`, content);
   }, [content, side]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    console.log(`${side} page onChange:`, e.target.value);
+    onChange(e.target.value);
+  };
 
   return (
     <Textarea
-      value={content || ""}
-      onChange={(e) => onChange(e.target.value)}
+      value={content}
+      onChange={handleChange}
       onKeyDown={onKeyDown}
       className={className}
       placeholder={placeholder}
