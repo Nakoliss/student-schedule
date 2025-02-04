@@ -35,65 +35,63 @@ export const handlePageOverflow = (
   const lines = value.split('\n');
   console.log('Number of lines:', lines.length);
 
-  // If content fits on current page, just update it
-  if (lines.length <= LINES_PER_PAGE) {
+  // If we're at exactly LINES_PER_PAGE lines and the last line isn't empty,
+  // or if we're over LINES_PER_PAGE, we need to handle overflow
+  if ((lines.length === LINES_PER_PAGE && lines[lines.length - 1].trim() !== '') || 
+      lines.length > LINES_PER_PAGE) {
+    
+    // Keep only the first LINES_PER_PAGE lines for current page
+    const contentLines = lines.slice(0, LINES_PER_PAGE);
+    const overflowLines = lines.slice(LINES_PER_PAGE);
+    
+    const content = contentLines.join('\n');
+    const overflow = overflowLines.join('\n');
+    
+    console.log('Overflow detected. Content:', content);
+    console.log('Overflow:', overflow);
+    
     const updatedPages = [...pages];
-    updatedPages[currentPageIndex] = {
-      ...updatedPages[currentPageIndex],
-      [side]: value
-    };
-    return { updatedPages };
-  }
 
-  // Split content into current page and overflow
-  const contentLines = lines.slice(0, LINES_PER_PAGE);
-  const overflowLines = lines.slice(LINES_PER_PAGE);
-  
-  const content = contentLines.join('\n');
-  const overflow = overflowLines.join('\n');
-  
-  const updatedPages = [...pages];
-
-  if (side === 'left') {
-    console.log('Left page overflow, moving to right page');
-    // Update left page with content that fits
-    updatedPages[currentPageIndex] = {
-      ...updatedPages[currentPageIndex],
-      left: content,
-      // Move overflow to right page, but preserve any existing content
-      right: updatedPages[currentPageIndex].right 
-        ? updatedPages[currentPageIndex].right + '\n' + overflow
-        : overflow
-    };
-    return { 
-      updatedPages,
-      focusSide: 'right'
-    };
-  } else {
-    console.log('Right page overflow, moving to next spread');
-    // Update right page with content that fits
-    updatedPages[currentPageIndex] = {
-      ...updatedPages[currentPageIndex],
-      right: content
-    };
-    
-    // Create new page if needed
-    if (!updatedPages[currentPageIndex + 1]) {
-      updatedPages.push({ left: "", right: "" });
+    if (side === 'left') {
+      console.log('Left page overflow, moving to right page');
+      updatedPages[currentPageIndex] = {
+        ...updatedPages[currentPageIndex],
+        left: content,
+        right: overflow
+      };
+      return { 
+        updatedPages,
+        focusSide: 'right'
+      };
+    } else {
+      console.log('Right page overflow, moving to next spread');
+      updatedPages[currentPageIndex] = {
+        ...updatedPages[currentPageIndex],
+        right: content
+      };
+      
+      if (!updatedPages[currentPageIndex + 1]) {
+        updatedPages.push({ left: "", right: "" });
+      }
+      
+      updatedPages[currentPageIndex + 1] = {
+        ...updatedPages[currentPageIndex + 1],
+        left: overflow
+      };
+      
+      return { 
+        updatedPages,
+        newPageIndex: currentPageIndex + 1,
+        focusSide: 'left'
+      };
     }
-    
-    // Move overflow to next page's left side, but preserve any existing content
-    updatedPages[currentPageIndex + 1] = {
-      ...updatedPages[currentPageIndex + 1],
-      left: updatedPages[currentPageIndex + 1].left
-        ? updatedPages[currentPageIndex + 1].left + '\n' + overflow
-        : overflow
-    };
-    
-    return { 
-      updatedPages,
-      newPageIndex: currentPageIndex + 1,
-      focusSide: 'left'
-    };
   }
+
+  // If content fits on current page, just update it
+  const updatedPages = [...pages];
+  updatedPages[currentPageIndex] = {
+    ...updatedPages[currentPageIndex],
+    [side]: value
+  };
+  return { updatedPages };
 };
