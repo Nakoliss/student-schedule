@@ -13,33 +13,9 @@ export const Index = () => {
   const navigate = useNavigate();
   const { events } = useEvents();
 
-  // Find the current course based on events
-  const getCurrentCourse = () => {
-    const now = new Date();
-    const currentEvent = events.find(event => {
-      const [hours, minutes] = event.startTime.split(':').map(Number);
-      const [endHours, endMinutes] = event.endTime.split(':').map(Number);
-      const eventDate = new Date();
-      eventDate.setHours(hours, minutes, 0);
-      const eventEndDate = new Date();
-      eventEndDate.setHours(endHours, endMinutes, 0);
-      return now >= eventDate && now <= eventEndDate;
-    });
-    return currentEvent;
-  };
-
   const handleNotesClick = () => {
-    const currentCourse = getCurrentCourse();
-    if (currentCourse) {
-      console.log("Navigating to current course notes:", currentCourse);
-      const defaultNoteId = `note-${currentCourse.id}`;
-      navigate(`/course/${currentCourse.id}/notes/${defaultNoteId}`, {
-        state: { courseTitle: currentCourse.title }
-      });
-    } else {
-      console.log("No current course, navigating to courses list");
-      navigate('/courses_notes');
-    }
+    console.log("Navigating to courses list");
+    navigate('/courses_notes');
   };
 
   return (
