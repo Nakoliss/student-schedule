@@ -9,6 +9,7 @@ import Landing from "./pages/Landing";
 import DayView from "./pages/DayView";
 import CourseList from "./pages/CourseList";
 import NoteEditor from "./pages/NoteEditor";
+import CourseNotes from "./pages/CourseNotes";
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/courses_notes" element={<CourseList />} />
             <Route path="/day/:dayIndex" element={<DayView />} />
             <Route path="/course/:courseId/notes/:noteId" element={<NoteEditor />} />
+            <Route path="/course/:courseId/notes" element={<CourseNotes />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>

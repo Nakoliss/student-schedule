@@ -14,8 +14,8 @@
                 },
                 "background": {
                     "activeOnStart": true,
-                    "beginsPattern": ".*",
-                    "endsPattern": ".*ready in\\s+[0-9]+\\s+ms"
+                    "beginsPattern": ".*VITE.*",
+                    "endsPattern": ".*Local:.*"
                 }
             }
         }
