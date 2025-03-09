@@ -4,7 +4,6 @@ import { useIsMobile } from "@/shared";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CalendarHeader } from '@/features/calendar';
 import { CalendarGrid } from '@/features/calendar';
-import { WeekendSection } from '@/features/calendar';
 import { getEventStyle } from '@/features/calendar';
 import { timeSlots, DEFAULT_SCROLL_TIME } from '@/features/calendar';
 import { useEvents } from '@/features/calendar';
@@ -58,8 +57,6 @@ export const WeeklyCalendar = () => {
             />
           </div>
         </ScrollArea>
-
-        <WeekendSection onDayClick={handleDayClick} daysLength={7} />
       </div>
     </div>
   );

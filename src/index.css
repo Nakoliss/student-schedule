@@ -76,7 +76,7 @@
 /* Calendar Styles */
 .calendar-grid {
   display: grid;
-  grid-template-columns: 60px repeat(5, 1fr);
+  grid-template-columns: 60px repeat(7, 1fr);
   gap: 0;
   border: 1px solid hsl(var(--border));
   border-top: none;
