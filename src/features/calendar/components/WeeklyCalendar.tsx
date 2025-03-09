@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/shared";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CalendarHeader } from './calendar/CalendarHeader';
-import { CalendarGrid } from './calendar/CalendarGrid';
-import { WeekendSection } from './calendar/WeekendSection';
-import { getEventStyle } from './calendar/utils';
-import { timeSlots, DEFAULT_SCROLL_TIME } from './calendar/constants';
-import { useEvents } from '@/hooks/use-events';
+import { CalendarHeader } from '@/features/calendar';
+import { CalendarGrid } from '@/features/calendar';
+import { WeekendSection } from '@/features/calendar';
+import { getEventStyle } from '@/features/calendar';
+import { timeSlots, DEFAULT_SCROLL_TIME } from '@/features/calendar';
+import { useEvents } from '@/features/calendar';
+import type { Event } from "../types";
 
 export const WeeklyCalendar = () => {
   const navigate = useNavigate();

@@ -2,12 +2,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useEvents } from "@/hooks/use-events";
+import { useEvents } from "@/features/calendar/hooks/use-events";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { NotebookPage } from "@/components/notes/NotebookPage";
-import { PageNavigation } from "@/components/notes/PageNavigation";
+import { NotebookPage } from "./NotebookPage";
+import { PageNavigation } from "./PageNavigation";
 import { handlePageOverflow, loadNote, saveNote } from "@/utils/noteUtils";
-import type { PageSpread } from "@/types/notes";
+import type { PageSpread } from "@/features/notes/types";
 
 const NoteEditor = () => {
   const { courseId } = useParams();

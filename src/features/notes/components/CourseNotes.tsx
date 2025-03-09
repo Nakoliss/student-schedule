@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useEvents } from "@/hooks/use-events";
+import { useEvents } from "@/features/calendar/hooks/use-events";
 
 const STORAGE_KEY_PREFIX = 'course_notes_';
 const LINES_PER_PAGE = 21; // Exactly 21 lines per page

@@ -1,11 +1,11 @@
-import { WeeklyCalendar } from "@/components/WeeklyCalendar";
-import { Sidebar } from "@/components/Sidebar";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { WeeklyCalendar } from "@/features/calendar";
+import { Sidebar } from "@/shared";
+import { useIsMobile } from "@/shared";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEvents } from "@/hooks/use-events";
+import { useEvents } from "@/features/calendar";
 
 export const Index = () => {
   const isMobile = useIsMobile();

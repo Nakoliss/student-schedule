@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { days } from "@/components/calendar/constants";
+import { days } from "@/features/calendar/components/constants";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useEvents } from "@/hooks/use-events";
+import { useEvents } from "@/features/calendar/hooks/use-events";
 
 const DayView = () => {
   const { dayIndex } = useParams();
@@ -46,7 +46,7 @@ const DayView = () => {
               onClick={() => handleCourseClick(event.id, event.title)}
             >
               <div className="text-2xl font-handwriting mb-2">
-                {event.startTime} - {event.endTime} → {event.title}
+                {event.start} - {event.end} → {event.title}
               </div>
             </div>
           ))}

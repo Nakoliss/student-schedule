@@ -1,4 +1,12 @@
-import type { Event } from '@/components/calendar/types';
+interface Event {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  description?: string;
+  startTime?: string;
+  endTime?: string;
+}
 
 const STORAGE_KEY = 'student_schedule_events';
 
@@ -11,17 +19,24 @@ export const eventApi = {
   getEvents: async (): Promise<Event[]> => {
     try {
       await delay(100); // Small delay to ensure storage is ready
-      const stored = localStorage.getItem(STORAGE_KEY);
-      console.log('Retrieved events from storage:', stored);
+      let events = INITIAL_EVENTS;
       
-      if (!stored) {
-        console.log('No events found, initializing with empty array');
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_EVENTS));
-        return INITIAL_EVENTS;
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        console.log('Retrieved events from storage:', stored);
+        
+        if (stored) {
+          events = JSON.parse(stored);
+          console.log('Parsed events:', events);
+        } else {
+          console.log('No events found, initializing with empty array');
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_EVENTS));
+        }
+      } catch (storageError) {
+        console.error('Storage access error:', storageError);
+        // Continue with empty events array
       }
       
-      const events = JSON.parse(stored);
-      console.log('Parsed events:', events);
       return events;
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -41,17 +56,19 @@ export const eventApi = {
   },
 
   createEvent: async (event: Event): Promise<Event> => {
-    try {
-      await delay(100);
-      const events = await eventApi.getEvents();
-      const newEvents = [...events, event];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newEvents));
-      console.log('Event created successfully:', event);
-      return event;
-    } catch (error) {
-      console.error('Error creating event:', error);
-      throw new Error('Failed to create event');
-    }
+    const apiEvent = {
+      ...event,
+      start: event.start || event.startTime,
+      end: event.end || event.endTime,
+      startTime: event.startTime || event.start,
+      endTime: event.endTime || event.end
+    };
+    
+    const events = await eventApi.getEvents();
+    events.push(apiEvent);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+    console.log('Event created successfully:', apiEvent);
+    return apiEvent;
   },
 
   updateEvent: async (event: Event): Promise<Event> => {

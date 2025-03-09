@@ -3,13 +3,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import ErrorBoundary from "./components/ErrorBoundary";
+import { ErrorBoundary } from "@/shared";
 import { Index } from "./pages/Index";
 import Landing from "./pages/Landing";
-import DayView from "./pages/DayView";
-import CourseList from "./pages/CourseList";
-import NoteEditor from "./pages/NoteEditor";
-import CourseNotes from "./pages/CourseNotes";
+import { DayView } from "@/features/calendar";
+import { CourseList } from "@/features/courses";
+import { NoteEditor, CourseNotes } from "@/features/notes";
 import './App.css';
 
 const queryClient = new QueryClient({
