@@ -1,6 +1,6 @@
 import React from 'react';
 import { timeSlots, days } from './constants';
-import { Event } from './types';
+import { Event } from '../types';
 import { EventCard } from './EventCard';
 import { TimeCell } from './TimeCell';
 
@@ -33,7 +33,7 @@ export const CalendarGrid = ({ events, onDayClick, getEventStyle }: CalendarGrid
         const [startHours, startMinutes] = event.startTime.split(':').map(Number);
         const [endHours, endMinutes] = event.endTime.split(':').map(Number);
         
-        // Calculate total minutes since midnight for start and end times
+        // Calculate total minutes since midnight
         const startTotalMinutes = startHours * 60 + startMinutes;
         const endTotalMinutes = endHours * 60 + endMinutes;
         

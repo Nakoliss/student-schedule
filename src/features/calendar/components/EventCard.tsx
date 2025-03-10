@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Event } from "./types";
+import { Event } from "../types";
 
 interface EventCardProps {
   event: Event;
@@ -26,40 +26,32 @@ export const EventCard = ({ event, getEventStyle, style }: EventCardProps) => {
   return (
     <div
       className={cn(
-        "event-card rounded-md overflow-hidden shadow-sm w-full min-h-[60px]",
+        "event-card rounded-md overflow-hidden shadow-sm w-full",
         getEventStyle(event.type)
       )}
       style={style}
     >
       <div className={cn(
         "flex flex-col h-full",
-        isShortEvent ? "p-0.5 gap-0" : "p-1 gap-1"
+        isShortEvent ? "p-[1px]" : "p-2"
       )}>
         <div className={cn(
-          "text-black flex flex-col h-full",
-          !isShortEvent && "flex-1"
+          "text-black",
+          isShortEvent 
+            ? "grid grid-cols-[1fr_auto] items-center gap-0.5 text-[10px]" 
+            : "flex flex-col gap-1 text-sm"
         )}>
-          <div>
-            <span className={cn(
-              "hidden md:inline font-medium",
-              !isShortEvent && "text-base"
-            )}>{event.title}</span>
-            <span className="md:hidden font-medium">{event.title.substring(0, 3)}...</span>
+          <div className="font-medium truncate">
+            {event.title}
           </div>
-          
           {isShortEvent ? (
-            <div className="text-center text-sm">
-              {event.startTime} - {event.endTime}
+            <div className="whitespace-nowrap opacity-75">
+              {event.startTime}-{event.endTime}
             </div>
           ) : (
-            <>
-              <div className="text-center text-base">
-                {event.startTime}
-              </div>
-              <div className="text-center text-base mt-auto">
-                {event.endTime}
-              </div>
-            </>
+            <div className="text-sm opacity-90">
+              {event.startTime} - {event.endTime}
+            </div>
           )}
         </div>
       </div>
